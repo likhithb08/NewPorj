@@ -6,6 +6,11 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add<LOCPS.LocpsRoleAuthorizeFilter>();
 });
 
+builder.Services.Configure<Microsoft.AspNetCore.Mvc.Razor.RazorViewEngineOptions>(options =>
+{
+    options.ViewLocationExpanders.Add(new LOCPS.RoleBasedViewLocationExpander());
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

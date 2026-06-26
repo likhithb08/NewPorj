@@ -1,5 +1,7 @@
 is_global = true
 build_property.TargetFramework = net8.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v8.0
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
 build_property.ProjectTypeGuids = 
@@ -9,207 +11,397 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = LOCPS
 build_property.RootNamespace = LOCPS
-build_property.ProjectDir = C:\Projects\Locps_V1.1\LOCPS\
+build_property.ProjectDir = c:\Users\2506770\Project_v01\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Projects\Locps_V1.1\LOCPS
+build_property.MSBuildProjectDirectory = c:\Users\2506770\Project_v01
 build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Account/Login.cshtml]
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xBY2NvdW50XExvZ2luLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Approval/Approve.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xBcHByb3ZhbFxBcHByb3ZlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Approval/Reject.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xBcHByb3ZhbFxSZWplY3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Approval/Review.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xBcHByb3ZhbFxSZXZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Credit/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xDcmVkaXRcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Credit/Evaluate.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xDcmVkaXRcRXZhbHVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Customer/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xDdXN0b21lclxDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Customer/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xDdXN0b21lclxEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Customer/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xDdXN0b21lclxFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Customer/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xDdXN0b21lclxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Dashboard/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xEYXNoYm9hcmRcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Disbursement/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xEaXNidXJzZW1lbnRcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Disbursement/History.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xEaXNidXJzZW1lbnRcSGlzdG9yeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Document/Upload.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xEb2N1bWVudFxVcGxvYWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Document/Validate.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xEb2N1bWVudFxWYWxpZGF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xIb21lXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Kyc/History.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xLeWNcSGlzdG9yeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Kyc/Verify.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xLeWNcVmVyaWZ5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Loan/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xMb2FuXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Loan/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xMb2FuXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Loan/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xMb2FuXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Loan/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xMb2FuXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Notification/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xOb3RpZmljYXRpb25cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Product/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xQcm9kdWN0XENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Product/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xQcm9kdWN0XERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Product/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xQcm9kdWN0XEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Reports/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xSZXBvcnRzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Settings/AuditLogs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTZXR0aW5nc1xBdWRpdExvZ3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Settings/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTZXR0aW5nc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Settings/ScoringRules.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTZXR0aW5nc1xTY29yaW5nUnVsZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_Breadcrumb.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX0JyZWFkY3J1bWIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_ConfirmationModal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX0NvbmZpcm1hdGlvbk1vZGFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_EmptyState.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX0VtcHR5U3RhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_Footer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX0Zvb3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_LoadingSpinner.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX0xvYWRpbmdTcGlubmVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_Pagination.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX1BhZ2luYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_Sidebar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX1NpZGViYXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_StatusBadge.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX1N0YXR1c0JhZGdlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_Toast.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX1RvYXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_Topbar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX1RvcGJhci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_WorkflowStepper.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX1dvcmtmbG93U3RlcHBlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/UserManagement/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xVc2VyTWFuYWdlbWVudFxDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/UserManagement/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xVc2VyTWFuYWdlbWVudFxFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/UserManagement/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xVc2VyTWFuYWdlbWVudFxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xfVmlld0ltcG9ydHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xfVmlld1N0YXJ0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2506770/Project_v01/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Account/Register.cshtml]
+[C:/Users/2506770/Project_v01/Views/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Approval/Approve.cshtml]
+[C:/Users/2506770/Project_v01/Views/Approval/Approve.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXBwcm92YWxcQXBwcm92ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Approval/Reject.cshtml]
+[C:/Users/2506770/Project_v01/Views/Approval/Reject.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXBwcm92YWxcUmVqZWN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Approval/Review.cshtml]
+[C:/Users/2506770/Project_v01/Views/Approval/Review.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXBwcm92YWxcUmV2aWV3LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Credit/Details.cshtml]
+[C:/Users/2506770/Project_v01/Views/Credit/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JlZGl0XERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Credit/Evaluate.cshtml]
+[C:/Users/2506770/Project_v01/Views/Credit/Evaluate.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JlZGl0XEV2YWx1YXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Customer/Create.cshtml]
+[C:/Users/2506770/Project_v01/Views/Customer/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Customer/Details.cshtml]
+[C:/Users/2506770/Project_v01/Views/Customer/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Customer/Edit.cshtml]
+[C:/Users/2506770/Project_v01/Views/Customer/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Customer/Index.cshtml]
+[C:/Users/2506770/Project_v01/Views/Customer/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Dashboard/Index.cshtml]
+[C:/Users/2506770/Project_v01/Views/Dashboard/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Disbursement/Create.cshtml]
+[C:/Users/2506770/Project_v01/Views/Disbursement/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGlzYnVyc2VtZW50XENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Disbursement/History.cshtml]
+[C:/Users/2506770/Project_v01/Views/Disbursement/History.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGlzYnVyc2VtZW50XEhpc3RvcnkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Document/Upload.cshtml]
+[C:/Users/2506770/Project_v01/Views/Document/Upload.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9jdW1lbnRcVXBsb2FkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Document/Validate.cshtml]
+[C:/Users/2506770/Project_v01/Views/Document/Validate.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9jdW1lbnRcVmFsaWRhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Home/Index.cshtml]
+[C:/Users/2506770/Project_v01/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Kyc/History.cshtml]
+[C:/Users/2506770/Project_v01/Views/Kyc/History.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS3ljXEhpc3RvcnkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Kyc/Verify.cshtml]
+[C:/Users/2506770/Project_v01/Views/Kyc/Verify.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS3ljXFZlcmlmeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Loan/Create.cshtml]
+[C:/Users/2506770/Project_v01/Views/Loan/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9hblxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Loan/Details.cshtml]
+[C:/Users/2506770/Project_v01/Views/Loan/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9hblxEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Loan/Edit.cshtml]
+[C:/Users/2506770/Project_v01/Views/Loan/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9hblxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Loan/Index.cshtml]
+[C:/Users/2506770/Project_v01/Views/Loan/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9hblxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Notification/Index.cshtml]
+[C:/Users/2506770/Project_v01/Views/Notification/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTm90aWZpY2F0aW9uXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Product/Create.cshtml]
+[C:/Users/2506770/Project_v01/Views/Product/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Product/Details.cshtml]
+[C:/Users/2506770/Project_v01/Views/Product/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Product/Index.cshtml]
+[C:/Users/2506770/Project_v01/Views/Product/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Reports/Index.cshtml]
+[C:/Users/2506770/Project_v01/Views/Reports/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Settings/AuditLogs.cshtml]
+[C:/Users/2506770/Project_v01/Views/Settings/AuditLogs.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcQXVkaXRMb2dzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Settings/Index.cshtml]
+[C:/Users/2506770/Project_v01/Views/Settings/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Settings/ScoringRules.cshtml]
+[C:/Users/2506770/Project_v01/Views/Settings/ScoringRules.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcU2NvcmluZ1J1bGVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/AccessDenied.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/AccessDenied.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEFjY2Vzc0RlbmllZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_Breadcrumb.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_Breadcrumb.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9CcmVhZGNydW1iLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_ConfirmationModal.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_ConfirmationModal.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Db25maXJtYXRpb25Nb2RhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_EmptyState.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_EmptyState.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9FbXB0eVN0YXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_Footer.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_Footer.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Gb290ZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_LoadingSpinner.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_LoadingSpinner.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2FkaW5nU3Bpbm5lci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_Pagination.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_Pagination.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9QYWdpbmF0aW9uLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_Sidebar.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_Sidebar.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TaWRlYmFyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_StatusBadge.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_StatusBadge.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TdGF0dXNCYWRnZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_Toast.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_Toast.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Ub2FzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_Topbar.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_Topbar.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Ub3BiYXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_WorkflowStepper.cshtml]
+[C:/Users/2506770/Project_v01/Views/Shared/_WorkflowStepper.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Xb3JrZmxvd1N0ZXBwZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/UserManagement/Create.cshtml]
+[C:/Users/2506770/Project_v01/Views/UserManagement/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlck1hbmFnZW1lbnRcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/UserManagement/Edit.cshtml]
+[C:/Users/2506770/Project_v01/Views/UserManagement/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlck1hbmFnZW1lbnRcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/UserManagement/Index.cshtml]
+[C:/Users/2506770/Project_v01/Views/UserManagement/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlck1hbmFnZW1lbnRcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/_ViewImports.cshtml]
+[C:/Users/2506770/Project_v01/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/_ViewStart.cshtml]
+[C:/Users/2506770/Project_v01/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Projects/Locps_V1.1/LOCPS/Views/Shared/_Layout.cshtml]
+[C:/Users/2506770/Project_v01/Lcops_V1.1/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = TGNvcHNfVjEuMVxWaWV3c1xTaGFyZWRcX0xheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = b-hfwiflq5v2
+
+[C:/Users/2506770/Project_v01/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-9060kqa2q9

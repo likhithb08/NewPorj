@@ -1,0 +1,164 @@
+@{
+    ViewData["Title"] = "Initiate Disbursement";
+    ViewData["CurrentStep"] = "Disbursement";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 fw-bold text-dark mb-1">Initiate Loan Disbursement</h1>
+        <p class="text-muted">Configure payment transfer details for sanctioned application <strong>LOC-9844-32</strong>.</p>
+    </div>
+</div>
+
+@await Html.PartialAsync("_WorkflowStepper")
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="card-title fw-bold m-0">Payment Transfer Details</h5>
+            </div>
+            <div class="card-body">
+                <!-- Transfer Mode Tabs -->
+                <ul class="nav nav-pills gap-2 mb-4" id="transferModeTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active px-4" id="neft-tab" data-bs-toggle="pill" data-bs-target="#neft-pane" type="button" role="tab">
+                            <i class="fa-solid fa-building-columns me-2"></i>NEFT
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link px-4" id="imps-tab" data-bs-toggle="pill" data-bs-target="#imps-pane" type="button" role="tab">
+                            <i class="fa-solid fa-bolt me-2"></i>IMPS
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link px-4" id="cheque-tab" data-bs-toggle="pill" data-bs-target="#cheque-pane" type="button" role="tab">
+                            <i class="fa-solid fa-money-check me-2"></i>Cheque
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="transferTabContent">
+                    <!-- NEFT Pane -->
+                    <div class="tab-pane fade show active" id="neft-pane" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Account Holder Name</label>
+                                <input type="text" class="form-control py-2 shadow-none" value="Rajesh Kumar" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Account Number</label>
+                                <input type="text" class="form-control py-2 shadow-none" value="HDFC0000198841221" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">IFSC Code</label>
+                                <input type="text" class="form-control py-2 shadow-none" value="HDFC0002198" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Bank Name</label>
+                                <input type="text" class="form-control py-2 shadow-none" value="HDFC Bank - JP Nagar Branch" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IMPS Pane -->
+                    <div class="tab-pane fade" id="imps-pane" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Registered Mobile Number</label>
+                                <input type="tel" class="form-control py-2 shadow-none" value="+91 98765 43210" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">MMID Code</label>
+                                <input type="text" class="form-control py-2 shadow-none" value="9014112" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cheque Pane -->
+                    <div class="tab-pane fade" id="cheque-pane" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Payee Name</label>
+                                <input type="text" class="form-control py-2 shadow-none" value="Rajesh Kumar" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Mailing Address</label>
+                                <input type="text" class="form-control py-2 shadow-none" value="#45, 2nd Main, JP Nagar, Bangalore - 560078" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex gap-2">
+                    <button class="btn btn-success px-4 py-2" onclick="initiateDisbursement()">
+                        <i class="fa-solid fa-paper-plane me-2"></i> Confirm & Disburse
+                    </button>
+                    <a href="/Dashboard" class="btn btn-light border px-4 py-2">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mt-4 mt-lg-0">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="fw-bold m-0">Disbursement Summary</h6>
+            </div>
+            <div class="card-body pt-0" style="font-size: 0.875rem;">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                        <span class="text-muted">Sanctioned Amount</span><span class="fw-bold text-success" id="disbSanctioned">₹ 45,00,000</span>
+                    </li>
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                        <span class="text-muted">Processing Fee (0.25%)</span><span class="fw-semibold text-danger" id="disbFee">- ₹ 11,250</span>
+                    </li>
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between border-top">
+                        <span class="fw-bold text-dark">Net Transfer Amount</span><span class="fw-bold text-primary" id="disbNet">₹ 44,88,750</span>
+                    </li>
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                        <span class="text-muted">First EMI Due</span><span class="fw-semibold">August 1, 2026</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const loanAmount = localStorage.getItem("locps_loan_amount") ? parseInt(localStorage.getItem("locps_loan_amount")) : 4500000;
+            const fee = Math.round(loanAmount * 0.0025);
+            const net = loanAmount - fee;
+
+            const disbSanctioned = document.getElementById("disbSanctioned");
+            if (disbSanctioned) disbSanctioned.textContent = "₹ " + loanAmount.toLocaleString('en-IN');
+
+            const disbFee = document.getElementById("disbFee");
+            if (disbFee) disbFee.textContent = "- ₹ " + fee.toLocaleString('en-IN');
+
+            const disbNet = document.getElementById("disbNet");
+            if (disbNet) disbNet.textContent = "₹ " + net.toLocaleString('en-IN');
+        });
+
+        function initiateDisbursement() {
+            const loanAmount = localStorage.getItem("locps_loan_amount") ? parseInt(localStorage.getItem("locps_loan_amount")) : 4500000;
+            const fee = Math.round(loanAmount * 0.0025);
+            const net = loanAmount - fee;
+
+            showConfirmationModal(
+                "Confirm Disbursement",
+                "This will initiate a bank transfer of <strong>₹ " + net.toLocaleString('en-IN') + "</strong> to the applicant's registered account. Proceed?",
+                function () {
+                    localStorage.setItem("locps_application_state", "disbursed");
+                    if (window.logWorkflowAction) {
+                        window.logWorkflowAction("Loan Disbursement", "LOC-9844-32");
+                    }
+                    showToast("Disbursement Initiated", "Transfer of ₹ " + net.toLocaleString('en-IN') + " queued for processing. Ref #DBR-20260624-9844.", "success");
+                    setTimeout(() => { window.location.href = "/Disbursement/History"; }, 1500);
+                }
+            );
+        }
+    </script>
+}

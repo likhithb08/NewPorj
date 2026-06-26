@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11723.231 stable
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LOCPS", "LOCPS.csproj", "{F28A72E6-ABA5-F612-1E31-0ECC437A4DDA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F28A72E6-ABA5-F612-1E31-0ECC437A4DDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F28A72E6-ABA5-F612-1E31-0ECC437A4DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F28A72E6-ABA5-F612-1E31-0ECC437A4DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F28A72E6-ABA5-F612-1E31-0ECC437A4DDA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {759C0A5F-F6AA-43AF-BD08-257076A1FBD8}
+	EndGlobalSection
+EndGlobal
