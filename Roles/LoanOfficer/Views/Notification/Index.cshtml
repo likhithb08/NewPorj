@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="row mb-4 align-items-center">
+    <div class="col-sm-6">
+        <h1 class="h3 fw-bold text-dark m-0">Notification Inbox</h1>
+        <p class="text-muted mb-0">System alerts, workflow updates and compliance notices.</p>
+    </div>
+    <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+        <button class="btn btn-outline-secondary btn-sm" onclick="clearNotifications()">
+            <i class="fa-solid fa-check-double me-2"></i> Mark All Read
+        </button>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="list-group list-group-flush" id="notifList">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            renderNotifications();
+        });
+
+        function renderNotifications() {
+            const role = localStorage.getItem("locps_demo_role") || "officer";
+            const loanType = localStorage.getItem("locps_loan_type") || "Home Purchase Loan";
+            const notificationsDb = {
+                customer: [
+                    { icon: "fa-paper-plane", color: "primary", title: "Application Submitted", body: "Your " + loanType + " application LOC-9844-32 has been recorded in pending state.", time: "10 minutes ago", unread: true, link: "/Dashboard" },
+                    { icon: "fa-check-circle", color: "success", title: "Documents Verified", body: "Your uploaded identity and salary verification documents were successfully validated.", time: "5 minutes ago", unread: true, link: "/Dashboard" }
+                ],
+                officer: [
+                    { icon: "fa-id-card", color: "primary", title: "KYC Uploaded", body: "Customer 'Rajesh Kumar' uploaded verification documents for application LOC-9844-32.", time: "2 minutes ago", unread: true, link: "/Kyc/Verify/9844" },
+                    { icon: "fa-file-shield", color: "info", title: "Documents Uploaded", body: "Application #LOC-9844-32 has documents ready for validation.", time: "15 minutes ago", unread: true, link: "/Document/Validate/9844" }
+                ],
+                underwriter: [
+                    { icon: "fa-signature", color: "info", title: "Ready for Underwriting", body: "Application #LOC-9844-32 has passed all credit thresholds and is queued for review.", time: "15 minutes ago", unread: true, link: "/Approval/Review/9844" },
+                    { icon: "fa-hand-holding-dollar", color: "success", title: "Disbursement Pending", body: "Approved application #LOC-7788-12 requires payment processing initiation.", time: "1 hour ago", unread: true, link: "/Disbursement/Create/9844" }
+                ],
+                admin: [
+                    { icon: "fa-user-shield", color: "primary", title: "New User Registered", body: "New loan officer account registered in the system.", time: "30 minutes ago", unread: true, link: "/UserManagement" },
+                    { icon: "fa-sliders", color: "success", title: "System Weights Updated", body: "Scoring engine weights were successfully modified by Admin.", time: "2 hours ago", unread: true, link: "/Settings/ScoringRules" }
+                ]
+            };
+
+            const list = document.getElementById("notifList");
+            const roleNotifs = notificationsDb[role] || [];
+
+            if (roleNotifs.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-regular fa-bell-slash fs-3 mb-3 d-block"></i>
+                        No alerts in your inbox
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = roleNotifs.map((n, i) => `
+                <a href="${n.link}" class="list-group-item list-group-item-action p-4 ${n.unread ? 'bg-primary bg-opacity-5' : ''}">
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="bg-${n.color} bg-opacity-10 text-${n.color} rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
+                            <i class="fa-solid ${n.icon}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold text-dark">${n.title} ${n.unread ? '<span class="badge bg-primary rounded-pill ms-2" style="font-size: 0.6rem;">NEW</span>' : ''}</span>
+                                <small class="text-muted text-nowrap ms-2">${n.time}</small>
+                            </div>
+                            <p class="mb-0 text-muted small">${n.body}</p>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+        }
+    </script>
+}

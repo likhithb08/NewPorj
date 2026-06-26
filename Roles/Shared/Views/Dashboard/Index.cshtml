@@ -1,0 +1,449 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["CurrentStep"] = "Dashboard";
+}
+
+<!-- ================= CUSTOMER PORTAL DASHBOARD ================= -->
+<div id="customerDashboard" class="d-none">
+    <!-- Welcome Banner -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="p-4 rounded-4 text-white shadow-sm" style="background: linear-gradient(135deg, var(--secondary-navy) 0%, #1E3A5F 100%);">
+                <div class="row align-items-center">
+                    <div class="col-md-8 mb-3 mb-md-0">
+                        <h2 class="fw-bold mb-1" id="custWelcomeName">Welcome, Rajesh Kumar!</h2>
+                        <p class="text-white-50 mb-0">Track your active loan applications, view status checklists, or browse notifications.</p>
+                    </div>
+                    <div class="col-md-4 text-md-end" id="custApplyBtnWrapper">
+                        <a href="/Loan/Create" class="btn btn-primary px-4 py-2 fw-semibold" style="border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(13,110,253,0.3);">
+                            <i class="fa-solid fa-plus me-2"></i> Apply for a Loan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Loan Progress Tracking -->
+    <div class="row mb-4" id="custActiveLoanCard">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-spinner text-primary me-2"></i> Active Application Tracking</h6>
+                    <span class="badge bg-warning text-dark px-3 py-2 fw-semibold" id="custStatusBadge">Under Review</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4 text-center text-sm-start">
+                        <div class="col-sm-6 col-md-3 mb-3 mb-md-0">
+                            <span class="text-muted small">Application ID</span>
+                            <h6 class="fw-bold text-dark mb-0 mt-1">#LOC-9844-32</h6>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-3 mb-md-0">
+                            <span class="text-muted small">Requested Amount</span>
+                            <h6 class="fw-bold text-primary mb-0 mt-1" id="custProductAmount">₹ 45,00,000</h6>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-3 mb-md-0">
+                            <span class="text-muted small">Product Type</span>
+                            <h6 class="fw-bold text-dark mb-0 mt-1" id="custProductType">Home Purchase Loan</h6>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <span class="text-muted small">Submission Date</span>
+                            <h6 class="fw-bold text-dark mb-0 mt-1" id="custSubmissionDate">2026-06-24</h6>
+                        </div>
+                    </div>
+
+                    <!-- Customer Dashboard Stepper -->
+                    <div class="stepper-container mt-3">
+                        <div class="stepper" style="min-width: auto;">
+                            <div class="step-item active" id="step1_item">
+                                <div class="step-circle" id="step1_circle"><i class="fa-solid fa-paper-plane"></i></div>
+                                <div class="step-label">Submitted</div>
+                            </div>
+                            <div class="step-item" id="step2_item">
+                                <div class="step-circle" id="step2_circle"><i class="fa-solid fa-file-circle-check"></i></div>
+                                <div class="step-label">Verified</div>
+                            </div>
+                            <div class="step-item" id="step3_item">
+                                <div class="step-circle" id="step3_circle"><i class="fa-solid fa-gauge-high"></i></div>
+                                <div class="step-label">Scored</div>
+                            </div>
+                            <div class="step-item" id="step4_item">
+                                <div class="step-circle" id="step4_circle"><i class="fa-solid fa-signature"></i></div>
+                                <div class="step-label">Decision</div>
+                            </div>
+                            <div class="step-item" id="step5_item">
+                                <div class="step-circle" id="step5_circle"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                                <div class="step-label">Disbursed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light py-3 border-0 d-flex justify-content-between align-items-center flex-wrap gap-2 mt-4" style="border-radius: 0 0 var(--radius-md) var(--radius-md);">
+                    <span class="small text-muted" id="custStatusDetail"><i class="fa-solid fa-circle-info me-1"></i> Awaiting Document verification check by Loan Officer.</span>
+                    <a href="/Document/Upload/9844" class="btn btn-sm btn-outline-primary fw-semibold" id="custUploadDocBtn"><i class="fa-solid fa-upload me-1"></i> Upload Supporting Documents</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details and Document Checklist -->
+    <div class="row g-4 mb-4">
+        <!-- Document Check (Read-Only) -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3 border-bottom">
+                    <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-file-shield me-2 text-primary"></i> My Uploaded Documents</h6>
+                </div>
+                <div class="card-body pt-0">
+                    <ul class="list-group list-group-flush" style="font-size: 0.875rem;">
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                            <div><i class="fa-solid fa-id-card text-muted me-2"></i> Identity Proof (PAN/Aadhaar)</div>
+                            <span class="badge bg-light text-secondary border px-3 py-1" id="custDocStatusIdentity">Verified by Staff</span>
+                        </li>
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                            <div><i class="fa-solid fa-receipt text-muted me-2"></i> Salary Slips (Last 3 Months)</div>
+                            <span class="badge bg-light text-secondary border px-3 py-1" id="custDocStatusIncome">Verified by Staff</span>
+                        </li>
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                            <div><i class="fa-solid fa-building-columns text-muted me-2"></i> Bank Statement (6 Months)</div>
+                            <span class="badge bg-light text-secondary border px-3 py-1" id="custDocStatusBank">Pending Validation</span>
+                        </li>
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                            <div><i class="fa-solid fa-house-flag text-muted me-2"></i> Property Title Deed</div>
+                            <span class="badge bg-light text-secondary border px-3 py-1" id="custDocStatusProperty">Pending Validation</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Notifications Widget -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3 border-bottom">
+                    <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-bell me-2 text-primary"></i> Notifications</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="d-flex flex-column" id="custNotificationContainer">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ledger of previous applications -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3 border-bottom">
+                    <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-list me-2 text-primary"></i> Application History</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive border-0">
+                        <table class="table align-middle m-0">
+                            <thead>
+                                <tr>
+                                    <th>Loan Reference</th>
+                                    <th>Product</th>
+                                    <th>Sanction Amount</th>
+                                    <th>Rate</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="custHistoryLedger">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= LOAN OFFICER DASHBOARD ================= -->
+<div id="officerDashboard" class="d-none">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 fw-bold text-dark mb-1">Loan Officer Command Desk</h1>
+            <p class="text-muted">Review loan applications, verify compliance documents, and calculate risk credit scores.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Pending Document Verifications -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-folder-open text-primary me-2"></i> Application Document Validation Queue</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle m-0">
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Customer</th>
+                                    <th>Requested Amount</th>
+                                    <th>Product Type</th>
+                                    <th>Progress State</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="officerDocsQueue">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scoring Calculations Pending Queue -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-calculator text-primary me-2"></i> Credit Scoring Pending Queue</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle m-0">
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Customer</th>
+                                    <th>Sanction Amount</th>
+                                    <th>Product Type</th>
+                                    <th>Document Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="officerScoringQueue">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Forwarded/Verified Applications -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-circle-check text-success me-2"></i> Verified Applications (Sent to Underwriter)</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle m-0">
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Customer</th>
+                                    <th>Sanction Amount</th>
+                                    <th>Product Type</th>
+                                    <th>Calculated CIBIL</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="officerCompletedQueue">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= UNDERWRITER DASHBOARD ================= -->
+<div id="underwriterDashboard" class="d-none">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 fw-bold text-dark mb-1">Underwriter Risk Decisioning Desk</h1>
+            <p class="text-muted">Review verified loans with calculated credit scores, make final decisions, and disburse amounts.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Decisions Queue -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-signature text-primary me-2"></i> Verified Applications Awaiting Decision</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle m-0">
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Customer</th>
+                                    <th>Loan Product</th>
+                                    <th>Amount</th>
+                                    <th>Calculated Score</th>
+                                    <th>Risk Class</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="underwriterDecisionsQueue">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approved Loans Awaiting Disbursement -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-hand-holding-dollar text-primary me-2"></i> Approved Loans Pending Disbursement</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle m-0">
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Customer</th>
+                                    <th>Loan Product</th>
+                                    <th>Amount</th>
+                                    <th>Decision Date</th>
+                                    <th>Payment Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="underwriterDisbursementsQueue">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settlement Ledgers -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-check-double text-success me-2"></i> Settled Disbursements</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle m-0">
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Customer</th>
+                                    <th>Loan Product</th>
+                                    <th>Net Amount Transferred</th>
+                                    <th>Date Completed</th>
+                                    <th>Ref ID</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="underwriterCompletedQueue">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= SYSTEM ADMIN DASHBOARD ================= -->
+<div id="adminDashboard" class="d-none">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 fw-bold text-dark mb-1">System Administration & Analytics</h1>
+            <p class="text-muted">Real-time pipeline analytics, configured scoring weights, and product definitions.</p>
+        </div>
+    </div>
+
+    <!-- KPI Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm card-hover h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px; font-size: 1.25rem;">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Total Applications</div>
+                        <h3 class="fw-bold text-dark mb-0" id="kpiTotal">0</h3>
+                        <span class="text-success small fw-semibold"><i class="fa-solid fa-arrow-up me-1"></i>12% vs last month</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm card-hover h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px; font-size: 1.25rem;">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Pending Review</div>
+                        <h3 class="fw-bold text-dark mb-0" id="kpiPending">0</h3>
+                        <span class="text-warning small fw-semibold"><i class="fa-solid fa-minus me-1"></i>Awaiting action</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm card-hover h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px; font-size: 1.25rem;">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Approved This Month</div>
+                        <h3 class="fw-bold text-dark mb-0" id="kpiApproved">0</h3>
+                        <span class="text-success small fw-semibold"><i class="fa-solid fa-arrow-up me-1"></i>8% increase</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm card-hover h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px; font-size: 1.25rem;">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Disbursed Volume</div>
+                        <h3 class="fw-bold text-dark mb-0" id="kpiDisbursed">₹ 0</h3>
+                        <span class="text-info small fw-semibold">This quarter</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="fw-bold text-dark m-0">Application Status Distribution</h6>
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <canvas id="statusDoughnutChart" style="max-height: 280px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="fw-bold text-dark m-0">Monthly Application Volume & Approvals</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyBarChart" style="max-height: 280px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/charts.js"></script>
+    <script src="~/js/dashboard.js"></script>
+}

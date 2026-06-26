@@ -1,0 +1,86 @@
+@{
+    ViewData["Title"] = "Disbursement History";
+    ViewData["CurrentStep"] = "Disbursement";
+}
+
+<div class="row mb-4">
+    <div class="col-sm-6">
+        <h1 class="h3 fw-bold text-dark m-0">Disbursement Ledger</h1>
+        <p class="text-muted mb-0">Complete record of all fund transfer transactions.</p>
+    </div>
+</div>
+
+@await Html.PartialAsync("_WorkflowStepper")
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+        <h5 class="card-title fw-bold m-0">Transaction History</h5>
+        <button class="btn btn-outline-primary btn-sm" onclick="exportDisbursements()">
+            <i class="fa-solid fa-download me-2"></i> Export CSV
+        </button>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive border-0">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Transaction Ref</th>
+                        <th>Application ID</th>
+                        <th>Applicant</th>
+                        <th>Transfer Amount</th>
+                        <th>Mode</th>
+                        <th>Transfer Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="disbursementBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/data-grid.js"></script>
+    <script>
+        const disbursementsData = [
+            { ref: "DBR-20260624-9844", appId: "LOC-9844-32", applicant: "Rajesh Kumar", amount: 4488750, mode: "NEFT", date: "2026-06-24", status: "Processing" },
+            { ref: "DBR-20260620-7788", appId: "LOC-7788-12", applicant: "Sunitha Rao", amount: 497500, mode: "IMPS", date: "2026-06-20", status: "Completed" },
+            { ref: "DBR-20260615-1155", appId: "LOC-1155-77", applicant: "Vikram Singh", amount: 5978000, mode: "NEFT", date: "2026-06-15", status: "Completed" }
+        ];
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Read from local storage if available
+            const loanAmount = localStorage.getItem("locps_loan_amount") ? parseInt(localStorage.getItem("locps_loan_amount")) : 4500000;
+            const fee = Math.round(loanAmount * 0.0025);
+            disbursementsData[0].amount = loanAmount - fee;
+
+            const tbody = document.getElementById("disbursementBody");
+            tbody.innerHTML = disbursementsData.map(r => {
+                let bc = r.status === "Completed" ? "badge-status-approved" : "badge-status-processing";
+                return `<tr>
+                    <td><span class="fw-bold text-dark">${r.ref}</span></td>
+                    <td>${r.appId}</td>
+                    <td>${r.applicant}</td>
+                    <td class="fw-semibold">₹ ${r.amount.toLocaleString('en-IN')}</td>
+                    <td><span class="badge bg-light text-secondary border">${r.mode}</span></td>
+                    <td>${r.date}</td>
+                    <td><span class="badge-status ${bc}">${r.status}</span></td>
+                </tr>`;
+            }).join('');
+        });
+
+        function exportDisbursements() {
+            const header = ["Transaction Ref", "Application ID", "Applicant", "Amount", "Mode", "Date", "Status"];
+            const rows = disbursementsData.map(r =>
+                [r.ref, r.appId, r.applicant, r.amount, r.mode, r.date, r.status].join(",")
+            );
+            const csv = [header.join(","), ...rows].join("\n");
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a"); a.href = url; a.download = "disbursements.csv"; a.click();
+            URL.revokeObjectURL(url);
+            showToast("Export Ready", "Disbursement ledger exported as CSV.", "success");
+        }
+    </script>
+}

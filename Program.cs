@@ -4,6 +4,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<LOCPS.LocpsRoleAuthorizeFilter>();
+})
+.AddRazorOptions(options =>
+{
+    options.ViewLocationExpanders.Add(new LOCPS.RoleBasedViewLocationExpander());
 });
 
 var app = builder.Build();

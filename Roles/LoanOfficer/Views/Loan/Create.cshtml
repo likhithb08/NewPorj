@@ -1,0 +1,200 @@
+@{
+    ViewData["Title"] = "New Loan Application";
+    ViewData["CurrentStep"] = "Loan Application";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 fw-bold text-dark mb-1">Create Loan Application</h1>
+        <p class="text-muted">Initiate a structured multi-step loan origination process.</p>
+    </div>
+</div>
+
+@await Html.PartialAsync("_WorkflowStepper")
+
+<div class="row">
+    <!-- Wizard Column -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                <h5 class="card-title fw-bold text-dark m-0" id="wizardTitle">Step 1: Select Customer & Product</h5>
+                <span class="badge bg-primary rounded-pill px-3 py-2" id="wizardStepBadge">Step 1 of 3</span>
+            </div>
+            
+            <div class="card-body">
+                <!-- Wizard Progress Bar -->
+                <div class="progress mb-4" style="height: 6px; border-radius: 10px;">
+                    <div id="wizardProgressBar" class="progress-bar bg-primary" role="progressbar" style="width: 33.3%;" aria-valuenow="33.3" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+
+                <form id="loanWizardForm" onsubmit="handleWizardSubmit(event)">
+                    <!-- STEP 1 CONTENT -->
+                    <div class="wizard-step" id="step-1">
+                        <div class="row g-3">
+                            <div class="col-md-12" id="customerSelectContainer">
+                                <label class="form-label fw-semibold text-muted small">Select Customer <span class="text-danger">*</span></label>
+                                <select class="form-select py-2 shadow-none" id="wizardCustId" required>
+                                    <option value="" disabled>Select customer from directory</option>
+                                    <option value="CUST-9011" selected>Rajesh Kumar (PAN: BKDPK7849D)</option>
+                                    <option value="CUST-9012">Sunitha Rao (PAN: ALKPR4821A)</option>
+                                    <option value="CUST-9013">Amit Sharma (PAN: BKDPK1122C)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-12 d-none" id="customerStaticContainer">
+                                <label class="form-label fw-semibold text-muted small">Applicant Name</label>
+                                <div class="form-control-plaintext fw-bold py-2 px-3 border rounded bg-light" style="border-radius: var(--radius-md);">
+                                    Rajesh Kumar (PAN: BKDPK7849D)
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Select Loan Product <span class="text-danger">*</span></label>
+                                <select class="form-select py-2 shadow-none" id="wizardProduct" required>
+                                    <option value="Home Purchase Loan" data-rate="8.5" selected>Home Purchase Loan (8.5% p.a.)</option>
+                                    <option value="Car Purchase Loan" data-rate="9.2">Car Purchase Loan (9.2% p.a.)</option>
+                                    <option value="Personal Express Loan" data-rate="10.5">Personal Express Loan (10.5% p.a.)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Loan Purpose <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control py-2 shadow-none" id="wizardPurpose" placeholder="e.g. Purchase of flat in Bangalore" value="Purchase of flat" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2 CONTENT -->
+                    <div class="wizard-step d-none" id="step-2">
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold text-muted small d-flex justify-content-between">
+                                    <span>Requested Loan Amount (INR)</span>
+                                    <span class="fw-bold text-primary" id="amountValDisplay">₹ 4,500,000</span>
+                                </label>
+                                <input type="range" class="range-slider" id="loanAmountSlider" min="100000" max="10000000" step="50000" value="4500000" />
+                                <div class="d-flex justify-content-between small text-muted mt-1">
+                                    <span>₹ 1 Lakh</span>
+                                    <span>₹ 1 Crore</span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small d-flex justify-content-between">
+                                    <span>Interest Rate (% p.a.)</span>
+                                    <span class="fw-bold text-primary" id="rateValDisplay">8.5%</span>
+                                </label>
+                                <input type="range" class="range-slider" id="loanRateSlider" min="5" max="25" step="0.1" value="8.5" />
+                                <div class="d-flex justify-content-between small text-muted mt-1">
+                                    <span>5%</span>
+                                    <span>25%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small d-flex justify-content-between">
+                                    <span>Tenure (Months)</span>
+                                    <span class="fw-bold text-primary" id="tenureValDisplay">180 Months</span>
+                                </label>
+                                <input type="range" class="range-slider" id="loanTenureSlider" min="12" max="360" step="12" value="180" />
+                                <div class="d-flex justify-content-between small text-muted mt-1">
+                                    <span>1 Year (12m)</span>
+                                    <span>30 Years (360m)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3 CONTENT -->
+                    <div class="wizard-step d-none" id="step-3">
+                        <div class="alert alert-info border-0 p-3" style="border-radius: var(--radius-md);">
+                            <h6 class="fw-bold mb-1"><i class="fa-solid fa-file-invoice-dollar me-1"></i> Loan Application Summary</h6>
+                            <p class="small mb-0">Please review the details before submitting to the credit validation pipeline.</p>
+                        </div>
+                        
+                        <div class="row g-3" style="font-size: 0.875rem;">
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded" style="border-radius: var(--radius-md);">
+                                    <div class="text-muted small">Applicant Customer</div>
+                                    <div class="fw-bold text-dark mt-1" id="sumCustomer">Rajesh Kumar</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded" style="border-radius: var(--radius-md);">
+                                    <div class="text-muted small">Loan Product Selected</div>
+                                    <div class="fw-bold text-dark mt-1" id="sumProduct">Home Purchase Loan</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded" style="border-radius: var(--radius-md);">
+                                    <div class="text-muted small">Sanction Loan Amount</div>
+                                    <div class="fw-bold text-primary mt-1" id="sumAmount">₹ 45,00,000</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-light p-3 rounded" style="border-radius: var(--radius-md);">
+                                    <div class="text-muted small">Applied Interest & Tenure</div>
+                                    <div class="fw-bold text-dark mt-1" id="sumRateTenure">8.5% for 180 Months</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="declarationCheck" required />
+                                <label class="form-check-label small text-muted" for="declarationCheck">
+                                    I hereby declare that the details provided are correct and match the verified customer profile documentation.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wizard Buttons -->
+                    <div class="mt-4 pt-3 border-top d-flex justify-content-between">
+                        <button type="button" id="btnPrev" class="btn btn-light border px-4 py-2 d-none" style="border-radius: var(--radius-md);" onclick="navigateStep(-1)">
+                            <i class="fa-solid fa-arrow-left me-2"></i> Previous
+                        </button>
+                        <button type="button" id="btnNext" class="btn btn-primary px-4 py-2 ms-auto" style="border-radius: var(--radius-md);" onclick="navigateStep(1)">
+                            Next <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Info & EMI Estimator Column -->
+    <div class="col-lg-4 mt-4 mt-lg-0">
+        <div class="card border-0 shadow-sm emi-calculator-card">
+            <div class="card-header border-bottom py-3">
+                <h5 class="card-title fw-bold text-white m-0"><i class="fa-solid fa-calculator me-2"></i> Loan EMI Estimator</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center py-3">
+                    <span class="small text-white-50 d-block mb-1">Estimated Monthly Installment</span>
+                    <h2 class="fw-extrabold text-white m-0" id="emiVal">₹ 44,312</h2>
+                </div>
+                
+                <div class="border-top pt-3 mt-3">
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span class="text-white-50">Principal Amount</span>
+                        <span class="fw-semibold" id="emiPrincipal">₹ 4,500,000</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span class="text-white-50">Estimated Interest Payable</span>
+                        <span class="fw-semibold text-warning" id="emiInterest">₹ 3,476,160</span>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                        <span class="text-white-50">Total Amount Payable</span>
+                        <span class="fw-semibold text-info" id="emiTotal">₹ 7,976,160</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/emi-calculator.js"></script>
+    <script src="~/js/loan-wizard.js"></script>
+}
