@@ -20,53 +20,69 @@ Then open your browser and navigate to `https://localhost:5001`.
 
 ## Project Structure
 
+This project now uses a role-based folder layout under `Roles/`.
+The old root `Controllers/` and `Views/` folders were consolidated into role-specific locations.
+
 ```
 LOCPS/
-├── Controllers/              # Shell controllers (return View() only)
-│   ├── AccountController.cs       # Login/Logout views
-│   ├── ApprovalController.cs      # Underwriter review/approve/reject
-│   ├── CreditController.cs        # Credit scoring evaluation
-│   ├── CustomerController.cs      # Customer directory CRUD
-│   ├── DashboardController.cs     # Main dashboard (default route)
-│   ├── DisbursementController.cs  # Fund transfer processing
-│   ├── DocumentController.cs      # Document upload & validation
-│   ├── KycController.cs           # KYC verification checks
-│   ├── LoanController.cs          # Loan applications CRUD
-│   ├── NotificationController.cs  # Notification inbox
-│   ├── ProductController.cs       # Loan product catalog
-│   ├── ReportsController.cs       # Analytics & reports
-│   ├── SettingsController.cs      # System config & scoring rules
-│   └── UserManagementController.cs # Staff user directory
-│
-├── Views/
-│   ├── Shared/                    # Layout shell & reusable components
-│   │   ├── _Layout.cshtml              # Master layout (sidebar + topbar + footer)
-│   │   ├── _Sidebar.cshtml             # Role-aware navigation sidebar
-│   │   ├── _Topbar.cshtml              # Search bar, notifications, profile
-│   │   ├── _Footer.cshtml              # Page footer
-│   │   ├── _WorkflowStepper.cshtml     # Loan lifecycle progress indicator
-│   │   ├── _Toast.cshtml               # Toast notification container
-│   │   ├── _ConfirmationModal.cshtml   # Reusable confirmation dialog
-│   │   ├── _Pagination.cshtml          # Data grid pagination controls
-│   │   ├── _Breadcrumb.cshtml          # Auto-generated breadcrumbs
-│   │   ├── _StatusBadge.cshtml         # Color-coded status badges
-│   │   ├── _EmptyState.cshtml          # "No results" placeholder
-│   │   └── _LoadingSpinner.cshtml      # Processing indicator
-│   ├── Account/Login.cshtml       # Corporate login page
-│   ├── Dashboard/Index.cshtml     # KPI cards + Chart.js graphs
-│   ├── Customer/{Index,Create,Edit,Details}.cshtml
-│   ├── Loan/{Index,Create,Edit,Details}.cshtml
-│   ├── Kyc/{Verify,History}.cshtml
-│   ├── Credit/{Evaluate,Details}.cshtml
-│   ├── Document/{Upload,Validate}.cshtml
-│   ├── Approval/{Review,Approve,Reject}.cshtml
-│   ├── Disbursement/{Create,History}.cshtml
-│   ├── Product/{Index,Create,Details}.cshtml
-│   ├── UserManagement/{Index,Create,Edit}.cshtml
-│   ├── Reports/Index.cshtml
-│   ├── Notification/Index.cshtml
-│   └── Settings/{Index,ScoringRules,AuditLogs}.cshtml
-│
+├── Roles/
+│   ├── Admin/
+│   │   ├── Controllers/
+│   │   │   ├── ProductController.cs
+│   │   │   ├── ReportsController.cs
+│   │   │   └── UserManagementController.cs
+│   │   └── Views/
+│   │       ├── Product/
+│   │       ├── Reports/
+│   │       ├── UserManagement/
+│   │       └── Settings/
+│   ├── Customer/
+│   │   ├── Controllers/
+│   │   │   └── CustomerController.cs
+│   │   └── Views/
+│   │       ├── Customer/
+│   │       ├── Dashboard/
+│   │       ├── Loan/
+│   │       ├── Notification/
+│   │       └── Settings/
+│   ├── LoanOfficer/
+│   │   ├── Controllers/
+│   │   │   ├── CreditController.cs
+│   │   │   ├── DocumentController.cs
+│   │   │   ├── KycController.cs
+│   │   │   └── LoanController.cs
+│   │   └── Views/
+│   │       ├── Credit/
+│   │       ├── Document/
+│   │       ├── Kyc/
+│   │       ├── Loan/
+│   │       ├── Dashboard/
+│   │       ├── Notification/
+│   │       └── Settings/
+│   ├── Underwriter/
+│   │   ├── Controllers/
+│   │   │   ├── ApprovalController.cs
+│   │   │   └── DisbursementController.cs
+│   │   └── Views/
+│   │       ├── Approval/
+│   │       ├── Disbursement/
+│   │       └── Dashboard/
+│   └── Shared/
+│       ├── Controllers/
+│       │   ├── AccountController.cs
+│       │   ├── DashboardController.cs
+│       │   ├── HomeController.cs
+│       │   ├── NotificationController.cs
+│       │   └── SettingsController.cs
+│       └── Views/
+│           ├── Account/
+│           ├── Home/
+│           ├── Shared/
+│           ├── Dashboard/
+│           ├── Document/
+│           ├── Notification/
+│           ├── Disbursement/
+│           └── Settings/
 ├── wwwroot/
 │   ├── css/theme.css              # Custom design system (documented palette)
 │   └── js/
@@ -81,7 +97,6 @@ LOCPS/
 │       ├── kyc.js                 # KYC verification simulation
 │       ├── credit-evaluation.js   # Credit gauge animation & rules
 │       └── document-upload.js     # Drag-and-drop upload with progress
-│
 └── Program.cs                     # MVC route registration only
 ```
 
