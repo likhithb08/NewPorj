@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 3,
   "targets": {
     "net10.0": {}
   },
@@ -8,23 +8,23 @@
     "net10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\2506831\\.nuget\\packages\\": {},
+    "C:\\Users\\2506770\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\2506831\\OneDrive - Cognizant\\Desktop\\Project Locps\\LoanProcessing_System\\LOCPS.csproj",
+      "projectUniqueName": "C:\\Users\\2506770\\LoanProcessing_System_v1\\LoanProcessing_System\\LOCPS.csproj",
       "projectName": "LOCPS",
-      "projectPath": "C:\\Users\\2506831\\OneDrive - Cognizant\\Desktop\\Project Locps\\LoanProcessing_System\\LOCPS.csproj",
-      "packagesPath": "C:\\Users\\2506831\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\2506831\\OneDrive - Cognizant\\Desktop\\Project Locps\\LoanProcessing_System\\obj\\",
+      "projectPath": "C:\\Users\\2506770\\LoanProcessing_System_v1\\LoanProcessing_System\\LOCPS.csproj",
+      "packagesPath": "C:\\Users\\2506770\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\2506770\\LoanProcessing_System_v1\\LoanProcessing_System\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\2506831\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\2506770\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -37,7 +37,6 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {}
         }
@@ -52,11 +51,10 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.300"
+      "SdkAnalysisLevel": "10.0.200"
     },
     "frameworks": {
       "net10.0": {
-        "framework": "net10.0",
         "targetAlias": "net10.0",
         "imports": [
           "net461",
@@ -77,7 +75,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
