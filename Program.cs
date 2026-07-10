@@ -1,3 +1,6 @@
+using LOCPS.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +12,9 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.ViewLocationExpanders.Add(new LOCPS.RoleBasedViewLocationExpander());
 });
+
+builder.Services.AddDbContext<LOCPS.Data.AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MyConn")));
 
 var app = builder.Build();
 
