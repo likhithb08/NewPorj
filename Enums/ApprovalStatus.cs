@@ -1,4 +1,4 @@
-public enum AprovalStatus
+public enum ApprovalStatus
 {
     Approved,
     Rejected
