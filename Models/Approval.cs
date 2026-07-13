@@ -19,7 +19,7 @@ namespace LOCPS.Models
 
         public decimal ApprovedInterestRate { get; set; }
 
-        public Approval? ApprovalStatus { get; set; }
+        public ApprovalStatus? ApprovalStatus { get; set; }
 
         [ForeignKey(nameof(Approver))]
         public int ApprovedByUserId { get; set; }
