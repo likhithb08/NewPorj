@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\LOCPS.props" />
-</Project>

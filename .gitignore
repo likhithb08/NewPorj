@@ -8,3 +8,16 @@ wwwroot/lib/
 *.sln.docstates
 TestResults/
 *.json
+
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio cache and settings
+.vs/
