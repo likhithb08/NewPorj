@@ -7,7 +7,7 @@ wwwroot/lib/
 *.userosscache
 *.sln.docstates
 TestResults/
-*.json
+TestResults/
 
 
 # Build results
