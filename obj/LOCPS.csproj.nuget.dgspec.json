@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\2506830\\OneDrive - Cognizant\\Desktop\\LOCPS\\LOCPS Project\\LOCPS.csproj": {}
+    "C:\\Users\\2506770\\LoanProcessing_System_v2\\LoanProcessing_System\\LOCPS.csproj": {}
   },
   "projects": {
-    "C:\\Users\\2506830\\OneDrive - Cognizant\\Desktop\\LOCPS\\LOCPS Project\\LOCPS.csproj": {
+    "C:\\Users\\2506770\\LoanProcessing_System_v2\\LoanProcessing_System\\LOCPS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\2506830\\OneDrive - Cognizant\\Desktop\\LOCPS\\LOCPS Project\\LOCPS.csproj",
+        "projectUniqueName": "C:\\Users\\2506770\\LoanProcessing_System_v2\\LoanProcessing_System\\LOCPS.csproj",
         "projectName": "LOCPS",
-        "projectPath": "C:\\Users\\2506830\\OneDrive - Cognizant\\Desktop\\LOCPS\\LOCPS Project\\LOCPS.csproj",
-        "packagesPath": "C:\\Users\\2506830\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\2506830\\OneDrive - Cognizant\\Desktop\\LOCPS\\LOCPS Project\\obj\\",
+        "projectPath": "C:\\Users\\2506770\\LoanProcessing_System_v2\\LoanProcessing_System\\LOCPS.csproj",
+        "packagesPath": "C:\\Users\\2506770\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\2506770\\LoanProcessing_System_v2\\LoanProcessing_System\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
