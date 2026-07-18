@@ -1,4 +1,4 @@
-﻿using LOCPS.Enums;
+using LOCPS.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,7 +12,7 @@ namespace LOCPS.Models
         public int ApplicationId { get; set; }
         public LoanApplication LoanApplication { get; set; } = null!;
         
-        public int AmountApproved { get; set; }
+        public decimal AmountApproved { get; set; }
 
         public DateTime? DisbursmentDate { get; set; }
         public DisbursmentMode DisbursmentMode { get; set; } = DisbursmentMode.NEFT;

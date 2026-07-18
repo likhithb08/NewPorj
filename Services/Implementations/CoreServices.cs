@@ -426,7 +426,7 @@ public class ApprovalService : IApprovalService
         {
             ApplicationId = applicationId,
             ApprovedByUserId = approverUserId,
-            ApprovedAmount = (long)approvedAmount,
+            ApprovedAmount = approvedAmount,  // Bug 6 fix: was cast to (long) which truncated decimal cents
             ApprovedInterestRate = interestRate,
             ApprovedTenureMonths = tenureMonths,
             ApprovalStatus = ApprovalStatus.Approved,
@@ -566,9 +566,8 @@ public class NotificationService : INotificationService
 
     public async Task<IEnumerable<Notification>> GetForUserAsync(int userId, bool unreadOnly = false)
     {
-        var notification = await _repository.GetNotificationByUserIdAsync(userId);
-        if (notification == null) return Enumerable.Empty<Notification>();
-        var notifications = new List<Notification> { notification };
+        // Bug 4 fix: was wrapping a single Notification? in a List — user saw only 1 notification ever
+        var notifications = await _repository.GetNotificationByUserIdAsync(userId);
         return unreadOnly ? notifications.Where(n => !n.IsRead) : notifications;
     }
 
@@ -613,10 +612,11 @@ public class AuditLogService : IAuditLogService
 
 public class EmiService : IEmiService
 {
-    private readonly IGenericRepository<Emi> _repository;
+    // Bug 3 fix: was IGenericRepository<Emi> which had no filtered query — caused ALL EMIs to be returned
+    private readonly IEmiRepository _repository;
     private readonly IAuditLogService _auditLogService;
 
-    public EmiService(IGenericRepository<Emi> repository, IAuditLogService auditLogService)
+    public EmiService(IEmiRepository repository, IAuditLogService auditLogService)
     {
         _repository = repository;
         _auditLogService = auditLogService;
@@ -625,7 +625,8 @@ public class EmiService : IEmiService
     public async Task GenerateScheduleAsync(int applicationId, decimal principal, decimal annualRate, int tenureMonths, int createdByUserId)
     {
         var monthlyRate = annualRate / 12 / 100;
-        var emiAmount = principal * monthlyRate * (decimal)Math.Pow(1 + (double)monthlyRate, tenureMonths) / 
+        // Bug 5 fix: EmiAmount is now decimal — removed (int) cast that was truncating fractional amounts
+        var emiAmount = principal * monthlyRate * (decimal)Math.Pow(1 + (double)monthlyRate, tenureMonths) /
                        ((decimal)Math.Pow(1 + (double)monthlyRate, tenureMonths) - 1);
 
         for (int i = 1; i <= tenureMonths; i++)
@@ -635,7 +636,7 @@ public class EmiService : IEmiService
                 ApplicationID = applicationId,
                 EmiNumber = i,
                 DueDate = DateTime.UtcNow.AddMonths(i),
-                EmiAmount = (int)emiAmount,
+                EmiAmount = Math.Round(emiAmount, 2),  // decimal — no truncation
                 PaidAmount = 0,
                 PenaltyAmount = 0,
                 Status = EmiStatus.Pending
@@ -648,7 +649,8 @@ public class EmiService : IEmiService
 
     public async Task<IEnumerable<Emi>> GetByApplicationIdAsync(int applicationId)
     {
-        return await _repository.GetAllAsync();
+        // Bug 3 fix: was GetAllAsync() — returns ALL EMIs for all loans, now filtered by applicationId
+        return await _repository.GetByApplicationIdAsync(applicationId);
     }
 
     public async Task<Emi> RecordPaymentAsync(int emiId, decimal paidAmount, int paidByUserId)

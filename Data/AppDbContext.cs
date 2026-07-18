@@ -1,4 +1,4 @@
-﻿using LOCPS.Models;
+using LOCPS.Models;
 using Microsoft.EntityFrameworkCore;
 namespace LOCPS.Data
 {
@@ -147,11 +147,11 @@ namespace LOCPS.Data
 
             modelBuilder.Entity<Approval>()
                 .Property(p => p.ApprovedAmount)
-                .HasPrecision(13, 2);
+                .HasPrecision(18, 2);
 
             modelBuilder.Entity<Approval>()
                 .Property(p => p.ApprovedInterestRate)
-                .HasPrecision(3, 2);
+                .HasPrecision(5, 2);
 
             modelBuilder.Entity<Disbursment>()
                 .HasOne(d => d.LoanApplication)
@@ -168,10 +168,6 @@ namespace LOCPS.Data
             modelBuilder.Entity<Disbursment>()
                 .Property(d => d.AmountApproved)
                 .HasPrecision(13, 2);
-
-            modelBuilder.Entity<Disbursment>()
-               .Property(d => d.BankAccountNumber)
-               .HasPrecision(12);
 
             modelBuilder.Entity<Emi>()
                 .Property(e => e.EmiAmount)

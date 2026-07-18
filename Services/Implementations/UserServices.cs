@@ -1,8 +1,8 @@
-﻿using LOCPS.Enums;
+using LOCPS.Enums;
 using LOCPS.Models;
+using LOCPS.Constants;
 using LOCPS.Repositories.Interfaces;
 using LOCPS.Services.Interfaces;
-using System.Net.WebSockets;
 using Microsoft.AspNetCore.Identity;
 
 namespace LOCPS.Services.Implementations
@@ -197,10 +197,12 @@ namespace LOCPS.Services.Implementations
             {
                 throw new KeyNotFoundException("Invalid user id");
             }
-            //Validate the role id
-            if (!Enum.IsDefined(typeof(Roles), roleId))
+            // Bug 8 fix: was Enum.IsDefined(typeof(Roles), roleId) which compared the int
+            // directly to Roles enum ordinals (Customer=0,LoanOfficer=1,...) — mismatched DB IDs (1,2,3,4)
+            // Now uses RoleConstants.GetRoleFromId to map correctly
+            if (!Enum.IsDefined(typeof(Roles), RoleConstants.GetRoleFromId(roleId)))
             {
-                throw new Exception("Invalid RoleQ!");
+                throw new Exception("Invalid Role!");
             }
             //Check for the user
             var user = await _userRepository.GetByIdAsync(userId);

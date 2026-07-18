@@ -1,4 +1,4 @@
-﻿using LOCPS.Models;
+using LOCPS.Models;
 
 namespace LOCPS.Repositories.Interfaces
 {
@@ -6,7 +6,8 @@ namespace LOCPS.Repositories.Interfaces
     {
         Task<Notification> CreateNotificationAsync(Notification Notification);
 
-        Task<Notification?> GetNotificationByUserIdAsync(int  userId);
+        // Returns ALL notifications for a user (was previously returning only the first one)
+        Task<IEnumerable<Notification>> GetNotificationByUserIdAsync(int userId);
 
         Task<bool> MarkAsReadAsync(Notification Notification);
     }

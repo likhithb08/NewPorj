@@ -1,4 +1,4 @@
-﻿using LOCPS.Data;
+using LOCPS.Data;
 using LOCPS.Models;
 using LOCPS.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +19,9 @@ namespace LOCPS.Repositories.Implementation
             await _context.SaveChangesAsync();
             return Notification;
         }
-        public async Task<Notification?> GetNotificationByUserIdAsync(int UserId)
+        public async Task<IEnumerable<Notification>> GetNotificationByUserIdAsync(int UserId)
         {
-            return await _context.Notifications.FirstOrDefaultAsync(n => n.UserId == UserId);
+            return await _context.Notifications.Where(n => n.UserId == UserId).ToListAsync();
         }
         public async Task<bool> MarkAsReadAsync( Notification notification)
         {

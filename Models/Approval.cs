@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using LOCPS.Enums;
 
@@ -13,7 +13,7 @@ namespace LOCPS.Models
         public int ApplicationId { get; set; }
         public LoanApplication Application { get; set; } = null!;
 
-        public long? ApprovedAmount { get; set; }
+        public decimal? ApprovedAmount { get; set; }
 
         public int ApprovedTenureMonths { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LOCPS.Models
@@ -16,7 +16,7 @@ namespace LOCPS.Models
         [Required]
         [Range(1,1000)]
         public int EmiNumber { get; set; }
-        public int EmiAmount { get; set; }
+        public decimal EmiAmount { get; set; }
 
         [Required]
         public DateTime DueDate { get; set; }

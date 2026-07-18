@@ -37,7 +37,7 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddDbContext<LOCPS.Data.AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConn")));
 
-//Repository Layer Dependecy Injection registration
+// Repository Layer Dependency Injection registration
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILoanApplicationRepository, LoanApplicationRepository>();
 builder.Services.AddScoped<IApprovalRepository, ApprovalRepository>();
@@ -47,9 +47,13 @@ builder.Services.AddScoped<IKycRepository, KycRepository>();
 builder.Services.AddScoped<ILoanProductRepository, LoanProductRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+// Bug 3 fix: register the new EMI-specific repository (was using IGenericRepository<Emi> with no filtered query)
+builder.Services.AddScoped<IEmiRepository, EmiRepository>();
 
-//Service Layer Dependecy Injection registration
+// Service Layer Dependency Injection registration
 builder.Services.AddScoped<IUserServices, UserServices>();
+// Bug 2 fix: IUserService (new interface in IServiceInterfaces.cs / CoreServices.cs) was never registered
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILoanProductService, LoanProductService>();
 builder.Services.AddScoped<ILoanApplicationService, LoanApplicationService>();
 builder.Services.AddScoped<IKycService, KycService>();
@@ -60,37 +64,19 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<IEmiService, EmiService>();
 
-
 var app = builder.Build();
 
-using(var scope = app.Services.CreateScope())
+// Bug 1 fix: The old inline seeder (lines 66-93) called AddRange but NEVER called SaveChangesAsync
+// so roles were never actually saved to the database.
+// Also, the existing DbInitializer (which seeds roles, users, and loan products) was never called.
+// Now we call it correctly using an async startup scope.
+using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    if (!context.Role.Any())
-    {
-        context.Role.AddRange(
-                new Role
-                {
-                    RoleId = 1,
-                    Roles = LOCPS.Enums.Roles.Customer
-                },
-                new Role
-                {
-                    RoleId = 2,
-                    Roles = LOCPS.Enums.Roles.LoanOfficer
-                },new Role
-                {
-                    RoleId = 3,
-                    Roles = LOCPS.Enums.Roles.UnderWriter
-                },
-                new Role
-                {
-                    RoleId = 4,
-                    Roles = LOCPS.Enums.Roles.Admin
-                }
-            );
-    }
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    await DbInitializer.InitializeAsync(context, logger);
 }
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
