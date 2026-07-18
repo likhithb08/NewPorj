@@ -15,23 +15,20 @@ namespace LOCPS.Models
         public LoanApplication Application { get; set; } = null!;
 
         [Required]
-        [StringLength(15)]
-        //This is a regular expression that checks the pattern as digits in adhaar card
-        [RegularExpression(@"^\d{15}$")]
-        public string AdhaarNumber { get; set; }
+        [StringLength(12)]
+        [RegularExpression(@"^\d{12}$", ErrorMessage = "Aadhaar must be 12 digits.")]
+        public string AadhaarNumber { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(12)]
-        //This is a regular expression that cehcks the pattern of PAN Card
-        [RegularExpression(@"^[A-Z{5}[0-9]{4}[A-Z]$")]
-        public string PanNumber { get; set; }
+        [StringLength(10)]
+        [RegularExpression(@"^[A-Z]{5}[0-9]{4}[A-Z]$", ErrorMessage = "Invalid PAN format.")]
+        public string PanNumber { get; set; } = string.Empty;
 
         [Required]
         public DateOnly DateOfBirth { get; set; }
 
         [Required]
-
-        public Gender? Gender { get; set; }
+        public Gender Gender { get; set; } = LOCPS.Enums.Gender.Male;
         
 
         [StringLength(250)]

@@ -13,7 +13,7 @@ namespace LOCPS.Models
 
         [Required]
         [EmailAddress]
-        public string Email { get; set; } 
+        public string Email { get; set; } = string.Empty; 
 
         [Required]
         [StringLength(50)]

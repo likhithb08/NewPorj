@@ -2,8 +2,12 @@
 {
     public enum NotificationType
     {
+        ApplicationSubmitted,
         ApplicationStatusUpdate,
         DocumentRequest,
-        ApprovalUpdate
+        ApprovalUpdate,
+        KYCVerified,
+        CreditEvaluated,
+        DisbursementProcessed
     }
 }

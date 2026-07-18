@@ -1,0 +1,78 @@
+using LOCPS.DTOs;
+using LOCPS.Enums;
+using LOCPS.Models;
+using LOCPS.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace LOCPS.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class KycApiController : ControllerBase
+{
+    private readonly IKycService _kycService;
+
+    public KycApiController(IKycService kycService)
+    {
+        _kycService = kycService;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<ApiResult<Kyc>>> SubmitKyc([FromBody] Kyc kyc)
+    {
+        try
+        {
+            var created = await _kycService.SubmitAsync(kyc);
+            return Ok(ApiResult<Kyc>.Ok(created, "KYC submitted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResult<Kyc>.Fail(ex.Message));
+        }
+    }
+
+    [HttpGet("application/{applicationId}")]
+    public async Task<ActionResult<ApiResult<Kyc>>> GetByApplicationId(int applicationId)
+    {
+        try
+        {
+            var kyc = await _kycService.GetByApplicationIdAsync(applicationId);
+            if (kyc == null)
+                return NotFound(ApiResult<Kyc>.Fail("KYC not found"));
+
+            return Ok(ApiResult<Kyc>.Ok(kyc));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResult<Kyc>.Fail(ex.Message));
+        }
+    }
+
+    [HttpPut("{id}/verify")]
+    public async Task<ActionResult<ApiResult<Kyc>>> VerifyKyc(int id)
+    {
+        try
+        {
+            var verified = await _kycService.VerifyAsync(id, 1); // TODO: Get from authenticated user
+            return Ok(ApiResult<Kyc>.Ok(verified, "KYC verified successfully"));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResult<Kyc>.Fail(ex.Message));
+        }
+    }
+
+    [HttpPut("{id}/reject")]
+    public async Task<ActionResult<ApiResult<Kyc>>> RejectKyc(int id)
+    {
+        try
+        {
+            var rejected = await _kycService.RejectAsync(id, 1); // TODO: Get from authenticated user
+            return Ok(ApiResult<Kyc>.Ok(rejected, "KYC rejected successfully"));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResult<Kyc>.Fail(ex.Message));
+        }
+    }
+}

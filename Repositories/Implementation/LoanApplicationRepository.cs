@@ -1,8 +1,10 @@
-﻿using LOCPS.Data;
+﻿using LOCPS.Common;
+using LOCPS.Data;
+using LOCPS.Enums;
 using LOCPS.Models;
 using LOCPS.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Contracts;
+
 namespace LOCPS.Repositories.Implementation
 {
     public class LoanApplicationRepository : GenericRepository<LoanApplication>, ILoanApplicationRepository
@@ -58,5 +60,44 @@ namespace LOCPS.Repositories.Implementation
         {
             return await _context.LoanApplications.Where(ui => ui.CreatedByUserId == userId).ToListAsync();
         }
+
+        public async Task<PagedResult<LoanApplication>> SearchAsync(PagedQuery query, ApplicationStatus? status = null, int? customerId = null)
+        {
+            var q = _context.LoanApplications
+                .Include(la => la.Customer)
+                .Include(la => la.Product)
+                .AsQueryable();
+
+            if (status.HasValue)
+                q = q.Where(la => la.Status == status.Value);
+            if (customerId.HasValue)
+                q = q.Where(la => la.CustomerId == customerId.Value);
+            if (!string.IsNullOrWhiteSpace(query.Search))
+            {
+                var s = query.Search.Trim();
+                q = q.Where(la =>
+                    (la.ApplicationNumber != null && la.ApplicationNumber.Contains(s)) ||
+                    la.Customer.FullName.Contains(s) ||
+                    la.Product.ProductName.Contains(s));
+            }
+
+            q = query.SortBy?.ToLowerInvariant() switch
+            {
+                "amount" => query.SortDescending ? q.OrderByDescending(la => la.RequestedAmount) : q.OrderBy(la => la.RequestedAmount),
+                "date" => query.SortDescending ? q.OrderByDescending(la => la.CreatedAt) : q.OrderBy(la => la.CreatedAt),
+                _ => q.OrderByDescending(la => la.CreatedAt)
+            };
+
+            var total = await q.CountAsync();
+            var items = await q.Skip((Math.Max(query.Page, 1) - 1) * query.PageSize).Take(query.PageSize).ToListAsync();
+            return new PagedResult<LoanApplication> { Items = items, Page = query.Page, PageSize = query.PageSize, TotalCount = total };
+        }
+
+        public async Task<LoanApplication?> GetWithDetailsAsync(int id) =>
+            await _context.LoanApplications
+                .Include(la => la.Customer)
+                .Include(la => la.Product)
+                .Include(la => la.CreatedBy)
+                .FirstOrDefaultAsync(la => la.ApplicationId == id);
     }
 }

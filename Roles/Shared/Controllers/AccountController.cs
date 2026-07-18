@@ -1,6 +1,11 @@
+using LOCPS.Constants;
+using LOCPS.Enums;
 using LOCPS.Models;
 using LOCPS.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LOCPS.Controllers
 {
@@ -22,8 +27,33 @@ namespace LOCPS.Controllers
             {
                 var user = await _userServices.LoginAsync(email, password);
 
-                // Set role-based cookie based on user's RoleId
-                SetRoleCookie(user.RoleId);
+                // Create claims for the user
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, user.FullName ?? string.Empty),
+                    new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                    new Claim(RoleConstants.RoleClaimType, RoleConstants.GetRoleToken(user.RoleId)),
+                    new Claim(RoleConstants.RoleIdClaimType, user.RoleId.ToString())
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(AuthConstants.SessionHours)
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                // Set role display cookie for view location expander (legacy support)
+                Response.Cookies.Append(AuthConstants.RoleDisplayCookieName, RoleConstants.GetRoleToken(user.RoleId), new CookieOptions
+                {
+                    Path = "/",
+                    MaxAge = TimeSpan.FromDays(AuthConstants.SessionHours),
+                    HttpOnly = false,
+                    SameSite = SameSiteMode.Lax
+                });
 
                 // Redirect to role-specific dashboard
                 return RedirectToRoleBasedDashboard(user.RoleId);
@@ -47,29 +77,23 @@ namespace LOCPS.Controllers
             return RedirectToAction("Login");
         } 
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            Response.Cookies.Delete("locps_demo_role");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            Response.Cookies.Delete(AuthConstants.RoleDisplayCookieName);
             return RedirectToAction("Login");
         }
 
         private void SetRoleCookie(int roleId)
         {
-            // Map RoleId to role string
-            // RoleId: 1=Customer, 2=Admin, 3=LoanOfficer, 4=UnderWriter
-            string roleString = roleId switch
-            {
-                1 => "customer",
-                2 => "admin",
-                3 => "officer",
-                4 => "underwriter",
-                _ => "customer"
-            };
+            // Use RoleConstants for single source of truth
+            string roleToken = RoleConstants.GetRoleToken(roleId);
 
-            Response.Cookies.Append("locps_user_role", roleString, new CookieOptions
+            Response.Cookies.Append(AuthConstants.RoleDisplayCookieName, roleToken, new CookieOptions
             {
                 Path = "/",
-                MaxAge = TimeSpan.FromDays(365),
+                MaxAge = TimeSpan.FromHours(AuthConstants.SessionHours),
+                HttpOnly = false,
                 SameSite = SameSiteMode.Lax
             });
         }

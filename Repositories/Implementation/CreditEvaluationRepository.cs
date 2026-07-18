@@ -1,4 +1,5 @@
-﻿using LOCPS.Repositories.Interfaces;
+﻿using LOCPS.Enums;
+using LOCPS.Repositories.Interfaces;
 using LOCPS.Models;
 using LOCPS.Data;
 using Microsoft.EntityFrameworkCore;
@@ -31,9 +32,9 @@ namespace LOCPS.Repositories.Implementation
             return CreditEvaluation;
         }
 
-        public async Task<IEnumerable<CreditEvaluation>> GetPendingCreditEvaluationAsync(CreditRecommendation CreditRecomendations)
+        public async Task<IEnumerable<CreditEvaluation>> GetPendingCreditEvaluationAsync(CreditRecommendation CreditRecommendation)
         {
-            return await _context.CreditEvaluation.Where(c => c.CreditRecomendations == CreditRecomendations).ToListAsync();
+            return await _context.CreditEvaluation.Where(c => c.CreditRecommendation == CreditRecommendation).ToListAsync();
         }
 
         public async Task<CreditEvaluation?> GetEvaluationByofficerAsync(int EvaluatedByUserId)

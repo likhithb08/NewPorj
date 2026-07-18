@@ -1,7 +1,7 @@
+using LOCPS.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Collections.Generic;
-using System.Linq;
+using System.Security.Claims;
 
 namespace LOCPS
 {
@@ -25,20 +25,31 @@ namespace LOCPS
                 return;
             }
 
-            // Get role from cookie
-            var role = context.HttpContext.Request.Cookies["locps_demo_role"] ?? "officer";
+            // Get role from claims first, fall back to cookie for legacy support
+            var user = context.HttpContext.User;
+            string role = "customer"; // default
+            
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                role = user.FindFirst(RoleConstants.RoleClaimType)?.Value ?? "customer";
+            }
+            else
+            {
+                // Fallback to cookie for demo mode
+                role = context.HttpContext.Request.Cookies[AuthConstants.RoleDisplayCookieName] ?? "customer";
+            }
 
-            // Role allowed routing prefixes
+            // Role allowed routing prefixes - using RoleConstants tokens
             var permissions = new Dictionary<string, string[]>
             {
-                { "customer", new[] { 
+                { RoleConstants.CustomerToken, new[] { 
                     "/dashboard", 
                     "/loan/create", 
                     "/document/upload", 
                     "/notification", 
                     "/settings" 
                 } },
-                { "officer", new[] { 
+                { RoleConstants.LoanOfficerToken, new[] { 
                     "/dashboard", 
                     "/customer", 
                     "/loan", 
@@ -49,7 +60,7 @@ namespace LOCPS
                     "/notification",
                     "/settings" 
                 } },
-                { "underwriter", new[] { 
+                { RoleConstants.UnderWriterToken, new[] { 
                     "/dashboard", 
                     "/approval", 
                     "/disbursement/create", 
@@ -57,7 +68,7 @@ namespace LOCPS
                     "/notification",
                     "/settings" 
                 } },
-                { "admin", new[] { 
+                { RoleConstants.AdminToken, new[] { 
                     "/dashboard", 
                     "/product", 
                     "/usermanagement", 
@@ -68,16 +79,16 @@ namespace LOCPS
                 } }
             };
 
-            // Specific path blocks for roles
+            // Specific path blocks for roles - using RoleConstants tokens
             // 1. Admin cannot apply for loans or upload documents
-            if (role == "admin" && (path.StartsWith("/loan/create") || path.StartsWith("/document/upload")))
+            if (role == RoleConstants.AdminToken && (path.StartsWith("/loan/create") || path.StartsWith("/document/upload")))
             {
                 RedirectToAccessDenied(context, role);
                 return;
             }
 
             // 2. Customer cannot verify, score, or disburse
-            if (role == "customer" && (
+            if (role == RoleConstants.CustomerToken && (
                 path.StartsWith("/customer") ||
                 path.StartsWith("/kyc") ||
                 path.StartsWith("/credit") ||
@@ -94,7 +105,7 @@ namespace LOCPS
             }
 
             // 3. Loan Officer must not register customers, apply for loans, approve, reject, or disburse
-            if (role == "officer" && (
+            if (role == RoleConstants.LoanOfficerToken && (
                 path.StartsWith("/customer/create") ||
                 path.StartsWith("/loan/create") ||
                 path.StartsWith("/approval") ||
@@ -106,7 +117,7 @@ namespace LOCPS
             }
 
             // 4. Underwriter must not verify documents, calculate credit scores, register customers, apply for loans
-            if (role == "underwriter" && (
+            if (role == RoleConstants.UnderWriterToken && (
                 path.StartsWith("/customer") ||
                 path.StartsWith("/loan/create") ||
                 path.StartsWith("/kyc") ||
@@ -120,7 +131,7 @@ namespace LOCPS
             }
 
             // 5. System configuration check (scoringrules and auditlogs only for admin)
-            if (role != "admin" && (
+            if (role != RoleConstants.AdminToken && (
                 path.StartsWith("/settings/scoringrules") ||
                 path.StartsWith("/settings/auditlogs")
             ))

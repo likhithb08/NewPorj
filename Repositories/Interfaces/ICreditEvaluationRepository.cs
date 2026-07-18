@@ -1,4 +1,5 @@
-﻿using LOCPS.Models;
+﻿using LOCPS.Enums;
+using LOCPS.Models;
 
 namespace LOCPS.Repositories.Interfaces
 {

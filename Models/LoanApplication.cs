@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LOCPS.Enums;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -36,7 +37,7 @@ namespace LOCPS.Models
         public decimal AnnualIncome { get; set; }
 
         [Required]
-        public string EmployeementType { get; set; } = string.Empty;
+        public string EmploymentType { get; set; } = string.Empty;
         //It is submitted because after the application object created it means the application is submitted
         public ApplicationStatus Status { get; set; } = ApplicationStatus.Submitted;
 

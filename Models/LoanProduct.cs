@@ -17,20 +17,20 @@ namespace LOCPS.Models
 
         [Required]
         [Range(1000,10000000000)]
-        public decimal? MinAmount { get; set; } = null;
+        public decimal MinAmount { get; set; }
 
         [Required]
         [Range(1000, 10000000000)]
-        public decimal? MaxAmount { get; set; } = null;
+        public decimal MaxAmount { get; set; }
         [Required]
         [Range(0,100)]
-        public decimal? InterestRate { get; set; } = null;
+        public decimal InterestRate { get; set; }
         [Required]
         [Range(1,360)]
-        public int? MaxTenureMonths { get; set; } = null;
+        public int MaxTenureMonths { get; set; }
         [Required]
         //Null because it will later be determined by the loan officer that how much fee is deducted
-        public decimal? ProcessingFee { get; set; } = null;
+        public decimal ProcessingFee { get; set; }
 
         //This IsActive fir=eld is required because if the product is inactive the customer should not be able to apply --> soft delete
         public bool IsActive { get; set; } = true; //True because the product is just created

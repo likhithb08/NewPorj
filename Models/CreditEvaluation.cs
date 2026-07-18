@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LOCPS.Enums;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,9 +17,7 @@ namespace LOCPS.Models
 
         [Range(300,900)]
         public int CreditScore { get; set; }
-        [Range(5,2)]
-        [Required]
-
+        [Range(0, 100)]
         public decimal DebitToIncomeRatio { get; set; }
         [Required]
         public int PaymentHistoryScore { get; set; }
@@ -27,7 +26,7 @@ namespace LOCPS.Models
         public decimal ExistingLiabilities { get; set; }
 
 
-        public CreditRecommendation? CreditRecomendations { get; set; }
+        public CreditRecommendation? CreditRecommendation { get; set; }
 
 
         [ForeignKey(nameof(EvaluatedBy))]

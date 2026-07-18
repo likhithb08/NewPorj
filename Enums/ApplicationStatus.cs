@@ -1,3 +1,5 @@
+namespace LOCPS.Enums;
+
 public enum ApplicationStatus
 {
     Submitted,
