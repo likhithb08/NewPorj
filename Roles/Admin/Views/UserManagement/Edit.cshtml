@@ -1,3 +1,4 @@
+@model LOCPS.ViewModels.Users.UserUpdateViewModel
 @{
     ViewData["Title"] = "Edit User Account";
 }
@@ -5,52 +6,66 @@
 <div class="row mb-4">
     <div class="col-12">
         <h1 class="h3 fw-bold text-dark mb-1">Edit User Account</h1>
-        <p class="text-muted">Modify role, branch, and access configuration.</p>
+        <p class="text-muted">Modify role, contact information, and access status.</p>
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg-7">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-3"><h5 class="fw-bold m-0">Edit: Anjali Sharma</h5></div>
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="fw-bold m-0">Edit: @Model.FullName</h5>
+            </div>
             <div class="card-body">
-                <form method="post" action="/UserManagement/Edit/2">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="UserId" />
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Full Name</label>
-                            <input type="text" class="form-control py-2 shadow-none" value="Anjali Sharma" />
+                            <label asp-for="UserName" class="form-label fw-semibold text-muted small">Username</label>
+                            <input asp-for="UserName" class="form-control py-2 shadow-none" />
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Email Address</label>
-                            <input type="email" class="form-control py-2 shadow-none" value="anjali.s@locps.in" />
+                            <label asp-for="FullName" class="form-label fw-semibold text-muted small">Full Name</label>
+                            <input asp-for="FullName" class="form-control py-2 shadow-none" />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Assigned Role</label>
-                            <select class="form-select py-2 shadow-none">
-                                <option value="officer">Loan Officer</option>
-                                <option value="underwriter" selected>Underwriter</option>
-                                <option value="admin">System Admin</option>
+                            <label asp-for="Email" class="form-label fw-semibold text-muted small">Email Address</label>
+                            <input asp-for="Email" class="form-control py-2 shadow-none" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label fw-semibold text-muted small">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control py-2 shadow-none" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="RoleId" class="form-label fw-semibold text-muted small">Assigned Role</label>
+                            <select asp-for="RoleId" class="form-select py-2 shadow-none">
+                                <option value="1">Customer</option>
+                                <option value="2">System Admin</option>
+                                <option value="3">Loan Officer</option>
+                                <option value="4">Underwriter</option>
                             </select>
+                            <span asp-validation-for="RoleId" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Branch</label>
-                            <select class="form-select py-2 shadow-none">
-                                <option value="hq" selected>Bangalore HQ</option>
-                                <option value="chennai">Chennai Branch</option>
-                                <option value="mumbai">Mumbai Branch</option>
+                            <label asp-for="IsActive" class="form-label fw-semibold text-muted small">Account Status</label>
+                            <select asp-for="IsActive" class="form-select py-2 shadow-none">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
                             </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Account Status</label>
-                            <select class="form-select py-2 shadow-none">
-                                <option value="active" selected>Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
+                            <span asp-validation-for="IsActive" class="text-danger small"></span>
                         </div>
                     </div>
                     <div class="mt-4 d-flex gap-2">
-                        <a href="/UserManagement" class="btn btn-primary px-4 py-2"><i class="fa-solid fa-floppy-disk me-2"></i> Save Changes</a>
-                        <a href="/UserManagement" class="btn btn-light border px-4 py-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 py-2">
+                            <i class="fa-solid fa-floppy-disk me-2"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-light border px-4 py-2">Cancel</a>
                     </div>
                 </form>
             </div>

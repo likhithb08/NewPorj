@@ -25,6 +25,7 @@ namespace LOCPS.Data
         public DbSet<Emi> Emis { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Auditlog> Auditlogs { get; set; }
+        public DbSet<ScoringConfig> ScoringConfigs { get; set; }
 
 
 
@@ -40,6 +41,9 @@ namespace LOCPS.Data
                 .HasOne(p => p.Role)
                 .WithMany(r => r.Permissions)
                 .HasForeignKey(p => p.RoleId);
+            modelBuilder.Entity<Role>()
+                .Property(r => r.RoleId)
+                .ValueGeneratedNever();
             modelBuilder.Entity<LoanApplication>()
                 .HasOne(la => la.Customer)
                 .WithMany()
@@ -201,6 +205,17 @@ namespace LOCPS.Data
                 .WithMany()
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ScoringConfig>()
+                .HasOne(s => s.UpdatedByUser)
+                .WithMany()
+                .HasForeignKey(s => s.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Ensure ConfigId is never auto-generated (singleton row)
+            modelBuilder.Entity<ScoringConfig>()
+                .Property(s => s.ConfigId)
+                .ValueGeneratedNever();
 
         }
     }

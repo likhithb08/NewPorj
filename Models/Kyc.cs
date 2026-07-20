@@ -1,4 +1,4 @@
-﻿using LOCPS.Enums;
+using LOCPS.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -43,6 +43,9 @@ namespace LOCPS.Models
         public string IncomeProof { get; set; } = string.Empty;
 
         public KycStatus VerificationStatus { get; set; } = KycStatus.Pending;
+
+        [StringLength(500)]
+        public string? Remarks { get; set; }
 
         [ForeignKey(nameof(Verification))]
         public int? VerifiedByUserId { get; set; }

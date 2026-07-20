@@ -1,3 +1,4 @@
+@model IEnumerable<LOCPS.Models.LoanProduct>
 @{
     ViewData["Title"] = "Loan Products";
 }
@@ -8,111 +9,47 @@
         <p class="text-muted mb-0">Manage all available loan product offerings and configurations.</p>
     </div>
     <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
-        <a href="/Product/Create" class="btn btn-primary px-4 py-2" style="border-radius: var(--radius-md);"><i class="fa-solid fa-plus me-2"></i> Create New Product</a>
+        <a asp-action="Create" class="btn btn-primary px-4 py-2" style="border-radius: var(--radius-md);"><i class="fa-solid fa-plus me-2"></i> Create New Product</a>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 card-hover">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; background-color: #1A56DB;"><i class="fa-solid fa-house"></i></div>
-                    <span class="badge-status badge-status-approved">Active</span>
+@if (Model != null && Model.Any())
+{
+    <div class="row g-4">
+        @foreach (var product in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 card-hover">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; background-color: #1A56DB;"><i class="fa-solid fa-house"></i></div>
+                            <span class="badge-status @(product.IsActive ? "badge-status-approved" : "badge-status-rejected")">@(product.IsActive ? "Active" : "Inactive")</span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-2">@product.ProductName</h5>
+                        @if (!string.IsNullOrEmpty(product.ProductDescription))
+                        {
+                            <p class="text-muted small mb-2">@product.ProductDescription</p>
+                        }
+                        <ul class="list-unstyled text-muted small mb-3">
+                            <li class="mb-1"><i class="fa-solid fa-percent me-2 text-primary opacity-50"></i> Interest: <strong>@product.InterestRate%</strong></li>
+                            <li class="mb-1"><i class="fa-solid fa-sack-dollar me-2 text-primary opacity-50"></i> Min: <strong>₹ @product.MinAmount.ToString("N0")</strong></li>
+                            <li class="mb-1"><i class="fa-solid fa-sack-dollar me-2 text-primary opacity-50"></i> Max: <strong>₹ @product.MaxAmount.ToString("N0")</strong></li>
+                            <li><i class="fa-solid fa-clock me-2 text-primary opacity-50"></i> Tenure: <strong>@product.MaxTenureMonths Months</strong></li>
+                        </ul>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-outline-primary btn-sm flex-grow-1">View Details</a>
+                            <a asp-action="Edit" asp-route-id="@product.ProductId" class="btn btn-sm btn-light border"><i class="fa-solid fa-pen"></i></a>
+                            <a asp-action="Delete" asp-route-id="@product.ProductId" class="btn btn-sm btn-light border text-danger"><i class="fa-solid fa-trash"></i></a>
+                        </div>
+                    </div>
                 </div>
-                <h5 class="fw-bold text-dark mb-2">Home Purchase Loan</h5>
-                <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1"><i class="fa-solid fa-percent me-2 text-primary opacity-50"></i> Interest: <strong>8.5% – 10.0%</strong></li>
-                    <li class="mb-1"><i class="fa-solid fa-sack-dollar me-2 text-primary opacity-50"></i> Max: <strong>₹ 5 Crore</strong></li>
-                    <li><i class="fa-solid fa-clock me-2 text-primary opacity-50"></i> Tenure: <strong>10 – 30 Years</strong></li>
-                </ul>
-                <a href="/Product/Details/1" class="btn btn-outline-primary btn-sm w-100">View Details</a>
             </div>
-        </div>
+        }
     </div>
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 card-hover">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; background-color: #10B981;"><i class="fa-solid fa-user-tag"></i></div>
-                    <span class="badge-status badge-status-approved">Active</span>
-                </div>
-                <h5 class="fw-bold text-dark mb-2">Personal Express Loan</h5>
-                <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1"><i class="fa-solid fa-percent me-2 text-primary opacity-50"></i> Interest: <strong>10.0% – 14.0%</strong></li>
-                    <li class="mb-1"><i class="fa-solid fa-sack-dollar me-2 text-primary opacity-50"></i> Max: <strong>₹ 25 Lakhs</strong></li>
-                    <li><i class="fa-solid fa-clock me-2 text-primary opacity-50"></i> Tenure: <strong>1 – 7 Years</strong></li>
-                </ul>
-                <a href="/Product/Details/2" class="btn btn-outline-primary btn-sm w-100">View Details</a>
-            </div>
-        </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fa-solid fa-info-circle me-2"></i> No loan products found. Click "Create New Product" to add one.
     </div>
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 card-hover">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; background-color: #F59E0B;"><i class="fa-solid fa-industry"></i></div>
-                    <span class="badge-status badge-status-approved">Active</span>
-                </div>
-                <h5 class="fw-bold text-dark mb-2">Commercial Equipment Loan</h5>
-                <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1"><i class="fa-solid fa-percent me-2 text-primary opacity-50"></i> Interest: <strong>9.5% – 13.0%</strong></li>
-                    <li class="mb-1"><i class="fa-solid fa-sack-dollar me-2 text-primary opacity-50"></i> Max: <strong>₹ 2 Crore</strong></li>
-                    <li><i class="fa-solid fa-clock me-2 text-primary opacity-50"></i> Tenure: <strong>3 – 10 Years</strong></li>
-                </ul>
-                <a href="/Product/Details/3" class="btn btn-outline-primary btn-sm w-100">View Details</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 card-hover">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; background-color: #8B5CF6;"><i class="fa-solid fa-graduation-cap"></i></div>
-                    <span class="badge-status badge-status-approved">Active</span>
-                </div>
-                <h5 class="fw-bold text-dark mb-2">Education Assistance Loan</h5>
-                <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1"><i class="fa-solid fa-percent me-2 text-primary opacity-50"></i> Interest: <strong>7.0% – 9.0%</strong></li>
-                    <li class="mb-1"><i class="fa-solid fa-sack-dollar me-2 text-primary opacity-50"></i> Max: <strong>₹ 50 Lakhs</strong></li>
-                    <li><i class="fa-solid fa-clock me-2 text-primary opacity-50"></i> Tenure: <strong>5 – 15 Years</strong></li>
-                </ul>
-                <a href="/Product/Details/4" class="btn btn-outline-primary btn-sm w-100">View Details</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 card-hover">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; background-color: #06B6D4;"><i class="fa-solid fa-car"></i></div>
-                    <span class="badge-status badge-status-rejected">Inactive</span>
-                </div>
-                <h5 class="fw-bold text-dark mb-2">Vehicle Finance Loan</h5>
-                <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1"><i class="fa-solid fa-percent me-2 text-primary opacity-50"></i> Interest: <strong>9.0% – 12.0%</strong></li>
-                    <li class="mb-1"><i class="fa-solid fa-sack-dollar me-2 text-primary opacity-50"></i> Max: <strong>₹ 75 Lakhs</strong></li>
-                    <li><i class="fa-solid fa-clock me-2 text-primary opacity-50"></i> Tenure: <strong>1 – 7 Years</strong></li>
-                </ul>
-                <a href="/Product/Details/5" class="btn btn-outline-primary btn-sm w-100">View Details</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 card-hover">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; background-color: #EF4444;"><i class="fa-solid fa-chart-line"></i></div>
-                    <span class="badge-status badge-status-approved">Active</span>
-                </div>
-                <h5 class="fw-bold text-dark mb-2">Overdraft Credit Facility</h5>
-                <ul class="list-unstyled text-muted small mb-3">
-                    <li class="mb-1"><i class="fa-solid fa-percent me-2 text-primary opacity-50"></i> Interest: <strong>12.0% – 16.0%</strong></li>
-                    <li class="mb-1"><i class="fa-solid fa-sack-dollar me-2 text-primary opacity-50"></i> Max: <strong>₹ 10 Lakhs</strong></li>
-                    <li><i class="fa-solid fa-clock me-2 text-primary opacity-50"></i> Tenure: <strong>Rolling</strong></li>
-                </ul>
-                <a href="/Product/Details/6" class="btn btn-outline-primary btn-sm w-100">View Details</a>
-            </div>
-        </div>
-    </div>
-</div>
+}

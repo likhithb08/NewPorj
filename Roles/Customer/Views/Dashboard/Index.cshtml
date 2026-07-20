@@ -1,105 +1,345 @@
+@model LOCPS.ViewModels.Dashboard.CustomerDashboardViewModel
+@using LOCPS.Enums
+
 @{
     ViewData["Title"] = "Dashboard";
     ViewData["CurrentStep"] = "Dashboard";
+
+    string StatusClass(ApplicationStatus s) => s switch
+    {
+        ApplicationStatus.Submitted => "pending",
+        ApplicationStatus.KYCPending => "pending",
+        ApplicationStatus.KYCVerified => "processing",
+        ApplicationStatus.UnderReview => "processing",
+        ApplicationStatus.CreditEvaluated => "processing",
+        ApplicationStatus.Approved => "approved",
+        ApplicationStatus.Disbursed => "approved",
+        ApplicationStatus.Closed => "approved",
+        ApplicationStatus.Rejected => "rejected",
+        _ => "pending"
+    };
+
+    int StepIndex(ApplicationStatus s) => s switch
+    {
+        ApplicationStatus.Submitted => 1,
+        ApplicationStatus.KYCPending => 1,
+        ApplicationStatus.KYCVerified => 2,
+        ApplicationStatus.UnderReview => 2,
+        ApplicationStatus.CreditEvaluated => 3,
+        ApplicationStatus.Approved => 4,
+        ApplicationStatus.Disbursed => 5,
+        _ => 0
+    };
 }
 
+<!-- Hero Welcome Banner -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="p-4 rounded-4 text-white shadow-sm" style="background: linear-gradient(135deg, var(--secondary-navy) 0%, #1E3A5F 100%);">
-            <div class="row align-items-center">
+        <div class="welcome-hero rounded-4 p-4 shadow-sm text-white position-relative overflow-hidden"
+             style="background: linear-gradient(135deg, #1E3A5F 0%, #1E40AF 60%, #3B82F6 100%);">
+            <div class="hero-glow"></div>
+            <div class="row align-items-center position-relative">
                 <div class="col-md-8 mb-3 mb-md-0">
-                    <h2 class="fw-bold mb-1 text-light">Welcome, Rajesh Kumar!</h2>
-                    <p class="text-white-50 mb-0">Track your active loan applications, view status checklists, or browse notifications.</p>
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="avatar-circle">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div>
+                            <h2 class="fw-bold mb-0 text-white">Welcome back, @Model.User.FullName 👋</h2>
+                            <p class="text-white-50 mb-0 small">@Model.User.Email &middot; Customer Portal</p>
+                        </div>
+                    </div>
+                    <p class="mb-0 mt-2" style="color:rgba(255,255,255,0.7)">Track your active loan applications, view status updates, or apply for a new loan.</p>
                 </div>
                 <div class="col-md-4 text-md-end">
-                    <a href="/Loan/Create" class="btn btn-primary px-4 py-2 fw-semibold" style="border-radius: var(--radius-md);"><i class="fa-solid fa-plus me-2"></i> Apply for a Loan</a>
+                    <a asp-controller="Customer" asp-action="Create" class="btn btn-light btn-lg px-4 py-2 fw-semibold shadow-sm">
+                        <i class="fa-solid fa-plus me-2 text-primary"></i>Apply for a Loan
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-spinner text-primary me-2"></i> Active Application Tracking</h6>
-                <span class="badge bg-warning text-dark px-3 py-2 fw-semibold">Under Review</span>
-            </div>
-            <div class="card-body">
-                <div class="row mb-4 text-center text-sm-start">
-                    <div class="col-sm-6 col-md-3 mb-3 mb-md-0"><span class="text-muted small">Application ID</span><h6 class="fw-bold text-dark mb-0 mt-1">#LOC-9844-32</h6></div>
-                    <div class="col-sm-6 col-md-3 mb-3 mb-md-0"><span class="text-muted small">Requested Amount</span><h6 class="fw-bold text-primary mb-0 mt-1">₹ 45,00,000</h6></div>
-                    <div class="col-sm-6 col-md-3 mb-3 mb-md-0"><span class="text-muted small">Product Type</span><h6 class="fw-bold text-dark mb-0 mt-1">Home Purchase Loan</h6></div>
-                    <div class="col-sm-6 col-md-3"><span class="text-muted small">Submission Date</span><h6 class="fw-bold text-dark mb-0 mt-1">2026-06-24</h6></div>
+<!-- Stats Strip -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-card-blue">
+            <div class="stat-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <div class="stat-value">@Model.Applications.TotalCount</div>
+            <div class="stat-label">Total Applications</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-card-orange">
+            <div class="stat-icon"><i class="fa-solid fa-spinner"></i></div>
+            <div class="stat-value">@Model.Applications.Items.Count(a => a.Status != ApplicationStatus.Approved && a.Status != ApplicationStatus.Rejected && a.Status != ApplicationStatus.Closed && a.Status != ApplicationStatus.Disbursed)</div>
+            <div class="stat-label">In Progress</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-card-green">
+            <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-value">@Model.Applications.Items.Count(a => a.Status == ApplicationStatus.Approved || a.Status == ApplicationStatus.Disbursed)</div>
+            <div class="stat-label">Approved</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-card-red">
+            <div class="stat-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+            <div class="stat-value">@Model.Applications.Items.Count(a => a.Status == ApplicationStatus.Rejected)</div>
+            <div class="stat-label">Rejected</div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Application Tracker -->
+@if (Model.LatestApplication != null)
+{
+    var app = Model.LatestApplication;
+    var step = StepIndex(app.Status);
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <h6 class="fw-bold text-dark m-0">
+                        <i class="fa-solid fa-satellite-dish text-primary me-2"></i>Active Application Tracker
+                    </h6>
+                    <span class="badge-status badge-status-@StatusClass(app.Status)">@app.Status</span>
                 </div>
-                <div class="stepper-container mt-3">
-                    <div class="stepper" style="min-width: auto;">
-                        <div class="step-item active"><div class="step-circle"><i class="fa-solid fa-paper-plane"></i></div><div class="step-label">Submitted</div></div>
-                        <div class="step-item active"><div class="step-circle"><i class="fa-solid fa-file-circle-check"></i></div><div class="step-label">Verified</div></div>
-                        <div class="step-item"><div class="step-circle"><i class="fa-solid fa-gauge-high"></i></div><div class="step-label">Scored</div></div>
-                        <div class="step-item"><div class="step-circle"><i class="fa-solid fa-signature"></i></div><div class="step-label">Decision</div></div>
-                        <div class="step-item"><div class="step-circle"><i class="fa-solid fa-hand-holding-dollar"></i></div><div class="step-label">Disbursed</div></div>
+                <div class="card-body">
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 col-md-3">
+                            <div class="app-info-tile">
+                                <span class="tile-label">Application ID</span>
+                                <span class="tile-value text-primary">@app.ApplicationNumber</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="app-info-tile">
+                                <span class="tile-label">Requested Amount</span>
+                                <span class="tile-value">₹ @app.RequestedAmount.ToString("N0")</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="app-info-tile">
+                                <span class="tile-label">Loan Product</span>
+                                <span class="tile-value">@(app.Product?.ProductName ?? "—")</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="app-info-tile">
+                                <span class="tile-label">Applied On</span>
+                                <span class="tile-value">@app.CreatedAt.ToString("dd MMM yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-stepper">
+                        <div class="progress-step @(step >= 1 ? "done" : "")">
+                            <div class="ps-circle"><i class="fa-solid fa-paper-plane"></i></div>
+                            <div class="ps-label">Submitted</div>
+                        </div>
+                        <div class="ps-line @(step >= 2 ? "done" : "")"></div>
+                        <div class="progress-step @(step >= 2 ? "done" : "")">
+                            <div class="ps-circle"><i class="fa-solid fa-id-card"></i></div>
+                            <div class="ps-label">KYC Verified</div>
+                        </div>
+                        <div class="ps-line @(step >= 3 ? "done" : "")"></div>
+                        <div class="progress-step @(step >= 3 ? "done" : "")">
+                            <div class="ps-circle"><i class="fa-solid fa-gauge-high"></i></div>
+                            <div class="ps-label">Credit Scored</div>
+                        </div>
+                        <div class="ps-line @(step >= 4 ? "done" : "")"></div>
+                        <div class="progress-step @(step >= 4 ? "done" : "")">
+                            <div class="ps-circle"><i class="fa-solid fa-signature"></i></div>
+                            <div class="ps-label">Decision</div>
+                        </div>
+                        <div class="ps-line @(step >= 5 ? "done" : "")"></div>
+                        <div class="progress-step @(step >= 5 ? "done" : "")">
+                            <div class="ps-circle"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                            <div class="ps-label">Disbursed</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-footer bg-light py-3 border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <span class="small text-muted"><i class="fa-solid fa-circle-info me-1"></i> Awaiting Document verification check by Loan Officer.</span>
-                <a href="/Document/Upload/9844" class="btn btn-sm btn-outline-primary fw-semibold"><i class="fa-solid fa-upload me-1"></i> Upload Supporting Documents</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row g-4 mb-4">
-    <div class="col-lg-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-0 py-3 border-bottom"><h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-file-shield me-2 text-primary"></i> My Uploaded Documents</h6></div>
-            <div class="card-body pt-0">
-                <ul class="list-group list-group-flush" style="font-size: 0.875rem;">
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center"><div><i class="fa-solid fa-id-card text-muted me-2"></i> Identity Proof (PAN/Aadhaar)</div><span class="badge bg-light text-secondary border px-3 py-1">Verified by Staff</span></li>
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center"><div><i class="fa-solid fa-receipt text-muted me-2"></i> Salary Slips (Last 3 Months)</div><span class="badge bg-light text-secondary border px-3 py-1">Verified by Staff</span></li>
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center"><div><i class="fa-solid fa-building-columns text-muted me-2"></i> Bank Statement (6 Months)</div><span class="badge bg-warning text-dark px-3 py-1">Pending Validation</span></li>
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center"><div><i class="fa-solid fa-house-flag text-muted me-2"></i> Property Title Deed</div><span class="badge bg-warning text-dark px-3 py-1">Pending Validation</span></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-0 py-3 border-bottom"><h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-bell me-2 text-primary"></i> Notifications</h6></div>
-            <div class="card-body p-0">
-                <a href="/Dashboard" class="d-block p-3 border-bottom text-decoration-none">
-                    <div class="fw-semibold text-dark small">Application Submitted</div>
-                    <p class="mb-0 text-muted small">Your Home Purchase Loan application has been submitted.</p>
-                </a>
-                <a href="/Dashboard" class="d-block p-3 text-decoration-none">
-                    <div class="fw-semibold text-dark small">Documents Verified</div>
-                    <p class="mb-0 text-muted small">Your uploaded PAN and Income papers are verified.</p>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-3 border-bottom"><h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-list me-2 text-primary"></i> Application History</h6></div>
-            <div class="card-body p-0">
-                <div class="table-responsive border-0">
-                    <table class="table align-middle m-0">
-                        <thead><tr><th>Loan Reference</th><th>Product</th><th>Sanction Amount</th><th>Rate</th><th>Status</th></tr></thead>
-                        <tbody>
-                            <tr><td class="fw-bold">LOC-9844-32</td><td>Home Purchase Loan</td><td>₹ 45,00,000</td><td>8.5%</td><td><span class="badge-status badge-status-processing">Under Review</span></td></tr>
-                            <tr><td class="fw-bold">LOC-7788-12</td><td>Personal Express Loan</td><td>₹ 5,00,000</td><td>10.5%</td><td><span class="badge-status badge-status-approved">Approved</span></td></tr>
-                            <tr><td class="fw-bold">LOC-4412-99</td><td>Car Purchase Loan</td><td>₹ 8,00,000</td><td>9.2%</td><td><span class="badge-status badge-status-pending">Pending</span></td></tr>
-                            <tr><td class="fw-bold">LOC-2231-08</td><td>Personal Express Loan</td><td>₹ 2,50,000</td><td>10.5%</td><td><span class="badge-status badge-status-rejected">Rejected</span></td></tr>
-                            <tr><td class="fw-bold">LOC-1155-77</td><td>Home Purchase Loan</td><td>₹ 60,00,000</td><td>8.5%</td><td><span class="badge-status badge-status-approved">Completed</span></td></tr>
-                        </tbody>
-                    </table>
+                <div class="card-footer bg-light border-0 py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <span class="small text-muted">
+                        <i class="fa-solid fa-circle-info me-1 text-primary"></i>
+                        @(app.Status == ApplicationStatus.Submitted ? "Awaiting KYC verification by Loan Officer." :
+                          app.Status == ApplicationStatus.KYCPending ? "Your KYC review is pending." :
+                          app.Status == ApplicationStatus.KYCVerified ? "KYC verified. Credit scoring in progress." :
+                          app.Status == ApplicationStatus.UnderReview ? "Under review by the underwriter team." :
+                          app.Status == ApplicationStatus.CreditEvaluated ? "Credit evaluation done. Awaiting final decision." :
+                          app.Status == ApplicationStatus.Approved ? "🎉 Congratulations! Your loan is approved." :
+                          "Application is being processed.")
+                    </span>
+                    <a asp-controller="Customer" asp-action="Details" asp-route-id="@app.ApplicationId"
+                       class="btn btn-sm btn-outline-primary fw-semibold">
+                        <i class="fa-solid fa-eye me-1"></i>View Details
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+}
+else
+{
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <div style="font-size:3.5rem; opacity:0.6; margin-bottom:1rem;">
+                        <i class="fa-solid fa-file-circle-plus text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">No Active Applications</h5>
+                    <p class="text-muted mb-4">You don't have any active loan applications. Start one today!</p>
+                    <a asp-controller="Customer" asp-action="Create" class="btn btn-primary px-5 py-2">
+                        <i class="fa-solid fa-plus me-2"></i>Apply for a Loan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Application History + Notifications -->
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-list me-2 text-primary"></i>Application History</h6>
+                <a asp-controller="Customer" asp-action="Index" class="btn btn-sm btn-light border">View All</a>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.Applications.Items.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Loan Reference</th>
+                                    <th>Product</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var app in Model.Applications.Items)
+                                {
+                                    <tr>
+                                        <td><span class="fw-bold text-dark">@app.ApplicationNumber</span></td>
+                                        <td class="text-muted small">@(app.Product?.ProductName ?? "—")</td>
+                                        <td>₹ @app.RequestedAmount.ToString("N0")</td>
+                                        <td><span class="badge-status badge-status-@StatusClass(app.Status)">@app.Status</span></td>
+                                        <td class="text-end">
+                                            <a asp-controller="Customer" asp-action="Details" asp-route-id="@app.ApplicationId"
+                                               class="btn btn-sm btn-light border">
+                                                <i class="fa-solid fa-eye text-muted me-1"></i>View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="fa-solid fa-folder-open text-muted fs-2 mb-3 d-block"></i>
+                        <p class="text-muted mb-3">No applications found.</p>
+                        <a asp-controller="Customer" asp-action="Create" class="btn btn-primary btn-sm">Create Your First Application</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3 border-bottom">
+                <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-bell me-2 text-primary"></i>Recent Notifications</h6>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.Notifications.Any())
+                {
+                    @foreach (var notif in Model.Notifications)
+                    {
+                        <div class="notification-item @(!notif.IsRead ? "notif-unread" : "")">
+                            <div class="notif-dot @(!notif.IsRead ? "notif-dot-active" : "")"></div>
+                            <div class="notif-content">
+                                <div class="fw-semibold text-dark small">@notif.Title</div>
+                                <p class="mb-1 text-muted small">@notif.Message</p>
+                                <span class="text-muted" style="font-size:0.75rem;">@notif.CreatedDate.ToString("dd MMM, HH:mm")</span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5 px-3">
+                        <i class="fa-regular fa-bell text-muted fs-2 mb-3 d-block"></i>
+                        <p class="text-muted small">No notifications yet. You'll be notified about updates here.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+<style>
+    .welcome-hero { position: relative; }
+    .hero-glow {
+        position: absolute; top: -50px; right: -50px; width: 300px; height: 300px;
+        background: radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%);
+        border-radius: 50%; pointer-events: none;
+    }
+    .avatar-circle {
+        width: 52px; height: 52px; border-radius: 50%;
+        background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem; color: white; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.3);
+    }
+    .stat-card {
+        border-radius: 12px; padding: 1.2rem 1rem; position: relative;
+        overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .stat-card-blue { background: linear-gradient(135deg,#EFF6FF,#DBEAFE); }
+    .stat-card-orange { background: linear-gradient(135deg,#FFF7ED,#FED7AA); }
+    .stat-card-green { background: linear-gradient(135deg,#F0FDF4,#DCFCE7); }
+    .stat-card-red { background: linear-gradient(135deg,#FFF5F5,#FEE2E2); }
+    .stat-icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+    .stat-card-blue .stat-icon { color: #1D4ED8; }
+    .stat-card-orange .stat-icon { color: #EA580C; }
+    .stat-card-green .stat-icon { color: #16A34A; }
+    .stat-card-red .stat-icon { color: #DC2626; }
+    .stat-value { font-size: 1.75rem; font-weight: 800; color: #0F172A; line-height: 1; }
+    .stat-label { font-size: 0.78rem; color: #64748B; margin-top: 0.25rem; font-weight: 500; }
+    .app-info-tile { background: #F8FAFC; border-radius: 10px; padding: 0.85rem 1rem; }
+    .tile-label { display: block; font-size: 0.74rem; color: #64748B; font-weight: 500; margin-bottom: 0.25rem; }
+    .tile-value { display: block; font-size: 0.95rem; font-weight: 700; color: #0F172A; }
+    .progress-stepper { display: flex; align-items: center; overflow-x: auto; padding: 0.5rem 0; }
+    .progress-step { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .ps-circle {
+        width: 44px; height: 44px; border-radius: 50%; background: #E2E8F0; color: #94A3B8;
+        display: flex; align-items: center; justify-content: center; font-size: 1rem;
+        transition: all 0.3s; border: 2px solid #E2E8F0;
+    }
+    .progress-step.done .ps-circle {
+        background: linear-gradient(135deg,#1E40AF,#3B82F6); color: white;
+        border-color: #1E40AF; box-shadow: 0 4px 12px rgba(30,64,175,0.3);
+    }
+    .ps-label { font-size: 0.72rem; margin-top: 0.4rem; color: #94A3B8; font-weight: 500; white-space: nowrap; }
+    .progress-step.done .ps-label { color: #1E40AF; font-weight: 700; }
+    .ps-line { flex: 1; height: 3px; background: #E2E8F0; min-width: 40px; transition: background 0.3s; }
+    .ps-line.done { background: linear-gradient(90deg,#1E40AF,#3B82F6); }
+    .notification-item { display: flex; gap: 0.75rem; padding: 0.9rem 1rem; border-bottom: 1px solid #F1F5F9; transition: background 0.15s; }
+    .notification-item:hover { background: #F8FAFC; }
+    .notification-item.notif-unread { background: #EFF6FF; }
+    .notification-item:last-child { border-bottom: none; }
+    .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: #E2E8F0; margin-top: 5px; flex-shrink: 0; }
+    .notif-dot.notif-dot-active { background: #1E40AF; }
+    .notif-content { flex: 1; min-width: 0; }
+</style>
+}

@@ -24,7 +24,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Account/Logout";
     });
 
-// Add services to the container.
+// Add MVC services (no API controllers)
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<LOCPS.LocpsRoleAuthorizeFilter>();
@@ -37,7 +37,7 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddDbContext<LOCPS.Data.AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConn")));
 
-// Repository Layer Dependency Injection registration
+// ── Repository Layer ──────────────────────────────────────────────────────────
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILoanApplicationRepository, LoanApplicationRepository>();
 builder.Services.AddScoped<IApprovalRepository, ApprovalRepository>();
@@ -47,12 +47,15 @@ builder.Services.AddScoped<IKycRepository, KycRepository>();
 builder.Services.AddScoped<ILoanProductRepository, LoanProductRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
-// Bug 3 fix: register the new EMI-specific repository (was using IGenericRepository<Emi> with no filtered query)
 builder.Services.AddScoped<IEmiRepository, EmiRepository>();
+builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 
-// Service Layer Dependency Injection registration
-builder.Services.AddScoped<IUserServices, UserServices>();
-// Bug 2 fix: IUserService (new interface in IServiceInterfaces.cs / CoreServices.cs) was never registered
+// ── Service Layer ─────────────────────────────────────────────────────────────
+// NOTE: AuditLogService and NotificationService are registered first because
+//       other services depend on them (constructor injection order matters in
+//       case of circular dependency resolution — Scoped lifetime avoids issues).
+builder.Services.AddScoped<IAuditLogService, AuditLogService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILoanProductService, LoanProductService>();
 builder.Services.AddScoped<ILoanApplicationService, LoanApplicationService>();
@@ -60,16 +63,13 @@ builder.Services.AddScoped<IKycService, KycService>();
 builder.Services.AddScoped<ICreditEvaluationService, CreditEvaluationService>();
 builder.Services.AddScoped<IApprovalService, ApprovalService>();
 builder.Services.AddScoped<IDisbursementService, DisbursementService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<IEmiService, EmiService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 var app = builder.Build();
 
-// Bug 1 fix: The old inline seeder (lines 66-93) called AddRange but NEVER called SaveChangesAsync
-// so roles were never actually saved to the database.
-// Also, the existing DbInitializer (which seeds roles, users, and loan products) was never called.
-// Now we call it correctly using an async startup scope.
+// Seed the database on startup
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -81,7 +81,6 @@ using (var scope = app.Services.CreateScope())
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

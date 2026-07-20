@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.SymbolStore;
 using LOCPS.Enums;
@@ -34,6 +34,9 @@ namespace LOCPS.Models
         public User Customer { get; set; } = null!;
 
         public DocumentStatus DocumentStatus { get; set; } = DocumentStatus.Pending;
+
+        [StringLength(500)]
+        public string? Remarks { get; set; }
 
         [ForeignKey(nameof(Verifier))]
         public int VerifiedByUserId { get; set; }

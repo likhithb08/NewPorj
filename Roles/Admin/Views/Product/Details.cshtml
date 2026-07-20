@@ -1,16 +1,20 @@
+@model LOCPS.Models.LoanProduct
 @{
     ViewData["Title"] = "Product Details";
 }
 
 <div class="row mb-4 align-items-center">
     <div class="col-sm-6">
-        <h1 class="h3 fw-bold text-dark m-0">Home Purchase Loan</h1>
+        <h1 class="h3 fw-bold text-dark m-0">@Model.ProductName</h1>
         <p class="text-muted mb-0">Product configuration and active application statistics.</p>
     </div>
     <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
-        <span class="badge-status badge-status-approved me-2">Active</span>
-        <a href="/Loan/Create" class="btn btn-primary px-3 py-2">
-            <i class="fa-solid fa-plus me-2"></i> New Application
+        <span class="badge-status @(Model.IsActive ? "badge-status-approved" : "badge-status-rejected") me-2">@(Model.IsActive ? "Active" : "Inactive")</span>
+        <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-light border px-3 py-2 me-2">
+            <i class="fa-solid fa-pen me-2"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-primary px-3 py-2">
+            <i class="fa-solid fa-arrow-left me-2"></i> Back
         </a>
     </div>
 </div>
@@ -19,44 +23,48 @@
     <div class="col-md-6 col-lg-3">
         <div class="card border-0 shadow-sm text-center py-3">
             <i class="fa-solid fa-percent text-primary fs-2 mb-2"></i>
-            <div class="text-muted small">Interest Rate Range</div>
-            <div class="fw-bold text-dark fs-5">8.5% – 10.0%</div>
+            <div class="text-muted small">Interest Rate</div>
+            <div class="fw-bold text-dark fs-5">@Model.InterestRate%</div>
         </div>
     </div>
     <div class="col-md-6 col-lg-3">
         <div class="card border-0 shadow-sm text-center py-3">
             <i class="fa-solid fa-sack-dollar text-success fs-2 mb-2"></i>
-            <div class="text-muted small">Max Loan Amount</div>
-            <div class="fw-bold text-dark fs-5">₹ 5 Crore</div>
+            <div class="text-muted small">Min Amount</div>
+            <div class="fw-bold text-dark fs-5">₹ @Model.MinAmount.ToString("N0")</div>
         </div>
     </div>
     <div class="col-md-6 col-lg-3">
         <div class="card border-0 shadow-sm text-center py-3">
-            <i class="fa-solid fa-clock text-warning fs-2 mb-2"></i>
-            <div class="text-muted small">Tenure Range</div>
-            <div class="fw-bold text-dark fs-5">10 – 30 Years</div>
+            <i class="fa-solid fa-sack-dollar text-warning fs-2 mb-2"></i>
+            <div class="text-muted small">Max Amount</div>
+            <div class="fw-bold text-dark fs-5">₹ @Model.MaxAmount.ToString("N0")</div>
         </div>
     </div>
     <div class="col-md-6 col-lg-3">
         <div class="card border-0 shadow-sm text-center py-3">
-            <i class="fa-solid fa-file-invoice-dollar text-info fs-2 mb-2"></i>
-            <div class="text-muted small">Active Applications</div>
-            <div class="fw-bold text-dark fs-5">24</div>
+            <i class="fa-solid fa-clock text-info fs-2 mb-2"></i>
+            <div class="text-muted small">Max Tenure</div>
+            <div class="fw-bold text-dark fs-5">@Model.MaxTenureMonths Months</div>
         </div>
     </div>
 
     <div class="col-12">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="fw-bold m-0">Eligibility &amp; Pricing Rules</h5>
+                <h5 class="fw-bold m-0">Product Details</h5>
             </div>
             <div class="card-body pt-0">
                 <ul class="list-group list-group-flush" style="font-size: 0.875rem;">
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Minimum CIBIL Score</span><span class="fw-semibold">700 and above</span></li>
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Processing Fee</span><span class="fw-semibold">0.25% of loan amount</span></li>
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Maximum DTI Limit</span><span class="fw-semibold">45%</span></li>
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Prepayment Penalty</span><span class="fw-semibold">Nil (after 12 EMIs)</span></li>
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Minimum Monthly Income</span><span class="fw-semibold">₹ 50,000</span></li>
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Product ID</span><span class="fw-semibold">@Model.ProductId</span></li>
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Product Name</span><span class="fw-semibold">@Model.ProductName</span></li>
+                    @if (!string.IsNullOrEmpty(Model.ProductDescription))
+                    {
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Description</span><span class="fw-semibold">@Model.ProductDescription</span></li>
+                    }
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Processing Fee</span><span class="fw-semibold">@Model.ProcessingFee%</span></li>
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Status</span><span class="fw-semibold">@(Model.IsActive ? "Active" : "Inactive")</span></li>
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Created Date</span><span class="fw-semibold">@Model.CreatedAt.ToString("yyyy-MM-dd")</span></li>
                 </ul>
             </div>
         </div>

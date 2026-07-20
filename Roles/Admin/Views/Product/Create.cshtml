@@ -1,3 +1,4 @@
+@model LOCPS.Models.LoanProduct
 @{
     ViewData["Title"] = "Create Loan Product";
 }
@@ -16,54 +17,62 @@
                 <h5 class="fw-bold m-0">Product Configuration</h5>
             </div>
             <div class="card-body">
-                <form method="post" action="/Product/Create">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
                     <div class="row g-3">
                         <div class="col-md-12">
-                            <label class="form-label fw-semibold text-muted small">Product Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control py-2 shadow-none" placeholder="e.g. Home Renovation Loan" required />
+                            <label asp-for="ProductName" class="form-label fw-semibold text-muted small">Product Name <span class="text-danger">*</span></label>
+                            <input asp-for="ProductName" class="form-control py-2 shadow-none" placeholder="e.g. Home Renovation Loan" required />
+                            <span asp-validation-for="ProductName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <label asp-for="ProductDescription" class="form-label fw-semibold text-muted small">Description</label>
+                            <textarea asp-for="ProductDescription" class="form-control py-2 shadow-none" rows="3" placeholder="Product description..."></textarea>
+                            <span asp-validation-for="ProductDescription" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Minimum Interest Rate (% p.a.) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.1" min="1" max="30" class="form-control py-2 shadow-none" placeholder="e.g. 8.5" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Maximum Interest Rate (% p.a.) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.1" min="1" max="30" class="form-control py-2 shadow-none" placeholder="e.g. 12.0" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Maximum Loan Amount (INR) <span class="text-danger">*</span></label>
+                            <label asp-for="MinAmount" class="form-label fw-semibold text-muted small">Minimum Amount (INR) <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light text-muted">₹</span>
-                                <input type="number" class="form-control py-2 shadow-none" placeholder="e.g. 5000000" required />
+                                <input asp-for="MinAmount" class="form-control py-2 shadow-none" placeholder="e.g. 100000" required />
                             </div>
+                            <span asp-validation-for="MinAmount" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Processing Fee (%)</label>
-                            <input type="number" step="0.01" class="form-control py-2 shadow-none" placeholder="e.g. 0.25" />
+                            <label asp-for="MaxAmount" class="form-label fw-semibold text-muted small">Maximum Amount (INR) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted">₹</span>
+                                <input asp-for="MaxAmount" class="form-control py-2 shadow-none" placeholder="e.g. 5000000" required />
+                            </div>
+                            <span asp-validation-for="MaxAmount" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Minimum Tenure (Months) <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control py-2 shadow-none" placeholder="e.g. 12" required />
+                            <label asp-for="InterestRate" class="form-label fw-semibold text-muted small">Interest Rate (% p.a.) <span class="text-danger">*</span></label>
+                            <input asp-for="InterestRate" step="0.1" min="0" max="100" class="form-control py-2 shadow-none" placeholder="e.g. 8.5" required />
+                            <span asp-validation-for="InterestRate" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Maximum Tenure (Months) <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control py-2 shadow-none" placeholder="e.g. 360" required />
+                            <label asp-for="ProcessingFee" class="form-label fw-semibold text-muted small">Processing Fee (%)</label>
+                            <input asp-for="ProcessingFee" step="0.01" class="form-control py-2 shadow-none" placeholder="e.g. 0.25" />
+                            <span asp-validation-for="ProcessingFee" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Minimum CIBIL Score Required</label>
-                            <input type="number" class="form-control py-2 shadow-none" placeholder="e.g. 700" />
+                            <label asp-for="MaxTenureMonths" class="form-label fw-semibold text-muted small">Maximum Tenure (Months) <span class="text-danger">*</span></label>
+                            <input asp-for="MaxTenureMonths" min="1" max="360" class="form-control py-2 shadow-none" placeholder="e.g. 360" required />
+                            <span asp-validation-for="MaxTenureMonths" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Product Status</label>
-                            <select class="form-select py-2 shadow-none">
-                                <option value="active" selected>Active</option>
-                                <option value="inactive">Inactive (Draft)</option>
+                            <label asp-for="IsActive" class="form-label fw-semibold text-muted small">Product Status</label>
+                            <select asp-for="IsActive" class="form-select py-2 shadow-none">
+                                <option value="true" selected>Active</option>
+                                <option value="false">Inactive (Draft)</option>
                             </select>
+                            <span asp-validation-for="IsActive" class="text-danger small"></span>
                         </div>
                     </div>
                     <div class="mt-4 d-flex gap-2">
-                        <a href="/Product" class="btn btn-primary px-4 py-2"><i class="fa-solid fa-floppy-disk me-2"></i> Save Product</a>
-                        <a href="/Product" class="btn btn-light border px-4 py-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4 py-2"><i class="fa-solid fa-floppy-disk me-2"></i> Save Product</button>
+                        <a asp-action="Index" class="btn btn-light border px-4 py-2">Cancel</a>
                     </div>
                 </form>
             </div>

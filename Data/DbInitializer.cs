@@ -15,6 +15,8 @@ public static class DbInitializer
 
         if (!await context.Role.AnyAsync())
         {
+            using var transaction = await context.Database.BeginTransactionAsync();
+            await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [Role] ON");
             context.Role.AddRange(
                 new Role { RoleId = RoleConstants.CustomerRoleId, Roles = Roles.Customer, RoleDescription = "Customer role for loan applicants", IsActive = true },
                 new Role { RoleId = RoleConstants.AdminRoleId, Roles = Roles.Admin, RoleDescription = "Admin role for system administration", IsActive = true },
@@ -22,6 +24,8 @@ public static class DbInitializer
                 new Role { RoleId = RoleConstants.UnderWriterRoleId, Roles = Roles.UnderWriter, RoleDescription = "UnderWriter role for loan underwriting", IsActive = true }
             );
             await context.SaveChangesAsync();
+            await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [Role] OFF");
+            await transaction.CommitAsync();
             logger.LogInformation("Seeded default roles.");
         }
 
@@ -91,6 +95,24 @@ public static class DbInitializer
             );
             await context.SaveChangesAsync();
             logger.LogInformation("Seeded loan products.");
+        }
+
+        // Seed default scoring configuration (singleton)
+        if (!await context.ScoringConfigs.AnyAsync())
+        {
+            context.ScoringConfigs.Add(new ScoringConfig
+            {
+                ConfigId                 = 1,
+                MinCreditScore           = 650,
+                BureauScoreWeight        = 35,
+                DebtToIncomeWeight       = 25,
+                CreditHistoryAgeWeight   = 15,
+                RepaymentConsistencyWeight = 15,
+                CreditUtilizationWeight  = 10,
+                LastUpdated              = DateTime.UtcNow
+            });
+            await context.SaveChangesAsync();
+            logger.LogInformation("Seeded default scoring configuration.");
         }
     }
 }

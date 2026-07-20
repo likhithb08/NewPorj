@@ -1,143 +1,305 @@
+@model LOCPS.Models.LoanApplication
 @{
-    ViewData["Title"] = "Loan Application Details";
-    ViewData["CurrentStep"] = "Loan Application";
+    ViewData["Title"] = "Application Details";
+    ViewData["CurrentStep"] = "Application Details";
+    var kyc = ViewBag.Kyc as LOCPS.Models.Kyc;
+    var docs = ViewBag.Documents as IEnumerable<LOCPS.Models.Document> ?? new List<LOCPS.Models.Document>();
+    var credit = ViewBag.CreditEvaluation as LOCPS.Models.CreditEvaluation;
 }
 
-<div class="row mb-4 align-items-center">
-    <div class="col-sm-6">
-        <h1 class="h3 fw-bold text-dark m-0">Application Details: LOC-9844-32</h1>
-        <p class="text-muted mb-0">Track and advance the origination steps for this customer.</p>
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="h3 fw-bold text-dark mb-1">Application @Model.ApplicationNumber</h1>
+        <p class="text-muted">Review all application details, perform KYC checks, and evaluate credit.</p>
     </div>
-    <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
-        <div class="d-flex gap-2 justify-content-sm-end">
-            <a href="/Loan/Edit/9844" class="btn btn-outline-primary" style="border-radius: var(--radius-md);"><i class="fa-solid fa-pen-to-square me-2"></i> Edit Terms</a>
-            <a href="/Kyc/Verify/9844" class="btn btn-success" style="border-radius: var(--radius-md);"><i class="fa-solid fa-id-card me-2"></i> Verify KYC</a>
-            <a href="/Approval/Review/9844" class="btn btn-primary" style="border-radius: var(--radius-md);"><i class="fa-solid fa-signature me-2"></i> Underwrite Decision</a>
-        </div>
+    <div class="col-md-4 text-end">
+        @if (Model.Status == LOCPS.Enums.ApplicationStatus.Submitted)
+        {
+            <form asp-controller="Kyc" asp-action="Initiate" method="post" class="d-inline">
+                <input type="hidden" name="applicationId" value="@Model.ApplicationId" />
+                <button type="submit" class="btn btn-primary rounded-pill shadow-sm px-4">
+                    <i class="fa-solid fa-play me-2"></i> Initiate KYC
+                </button>
+            </form>
+        }
+        else if (Model.Status == LOCPS.Enums.ApplicationStatus.KYCVerified)
+        {
+            <form asp-controller="Loan" asp-action="ForwardToUnderwriter" method="post" class="d-inline">
+                <input type="hidden" name="id" value="@Model.ApplicationId" />
+                <button type="submit" class="btn btn-success rounded-pill shadow-sm px-4">
+                    <i class="fa-solid fa-paper-plane me-2"></i> Forward to Underwriter
+                </button>
+            </form>
+        }
+        <a asp-action="Index" class="btn btn-light border rounded-pill px-4 ms-2">Back</a>
     </div>
 </div>
 
-@await Html.PartialAsync("_WorkflowStepper")
-
-<div class="row g-4">
-    <!-- Financial Overview -->
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title fw-bold text-dark m-0">Application Summary: Home Purchase Loan</h5>
-            </div>
-            <div class="card-body pt-0">
-                <div class="row g-3">
-                    <div class="col-md-6 col-lg-3">
-                        <div class="bg-light p-3 rounded text-center">
-                            <span class="text-muted small">Sanction Amount</span>
-                            <h4 class="fw-bold text-dark mt-1">₹ 45L</h4>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="bg-light p-3 rounded text-center">
-                            <span class="text-muted small">Annual Rate</span>
-                            <h4 class="fw-bold text-primary mt-1">8.5%</h4>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="bg-light p-3 rounded text-center">
-                            <span class="text-muted small">Tenure Months</span>
-                            <h4 class="fw-bold text-dark mt-1">180m</h4>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="bg-light p-3 rounded text-center">
-                            <span class="text-muted small">Estimated EMI</span>
-                            <h4 class="fw-bold text-success mt-1">₹ 44.3K</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Progress Tracking Cards -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-3">
-                <h5 class="card-title fw-bold text-dark m-0">Origination Workflow Status Checklist</h5>
-            </div>
-            <div class="card-body pt-0">
-                <div class="list-group list-group-flush" style="font-size: 0.875rem;">
-                    <!-- Step 1 -->
-                    <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;"><i class="fa-solid fa-check small"></i></div>
-                            <div>
-                                <div class="fw-semibold">Customer Onboarded</div>
-                                <span class="text-muted small">Customer details successfully registered in core.</span>
-                            </div>
-                        </div>
-                        <a href="/Customer/Details/9011" class="btn btn-sm btn-light border">Details</a>
-                    </div>
-                    <!-- Step 2 -->
-                    <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;"><i class="fa-solid fa-check small"></i></div>
-                            <div>
-                                <div class="fw-semibold">KYC Verification Check</div>
-                                <span class="text-muted small">PAN/Aadhaar validated matching.</span>
-                            </div>
-                        </div>
-                        <a href="/Kyc/Verify/9844" class="btn btn-sm btn-light border">Verify</a>
-                    </div>
-                    <!-- Step 3 -->
-                    <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;"><i class="fa-solid fa-clock-rotate-left small"></i></div>
-                            <div>
-                                <div class="fw-semibold">Credit Score Checks</div>
-                                <span class="text-muted small">Credit score computed, awaiting rule validation.</span>
-                            </div>
-                        </div>
-                        <a href="/Credit/Evaluate/9844" class="btn btn-sm btn-light border">Evaluate</a>
-                    </div>
-                    <!-- Step 4 -->
-                    <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;"><i class="fa-solid fa-minus small"></i></div>
-                            <div>
-                                <div class="fw-semibold">Document Validation</div>
-                                <span class="text-muted small">Salary receipts & collateral documents verification.</span>
-                            </div>
-                        </div>
-                        <a href="/Document/Upload/9844" class="btn btn-sm btn-light border">Documents</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 
-    <!-- Applicant Summary Card -->
+<div class="row">
     <div class="col-lg-4">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white border-0 py-3">
-                <h6 class="fw-bold text-dark m-0">Applicant Information</h6>
+        <!-- Applicant Profile Card -->
+        <div class="card shadow-sm border-0 mb-4 rounded-4 overflow-hidden">
+            <div class="bg-primary pt-4 pb-5 px-4 text-center">
+                <div class="avatar-circle-lg bg-white text-primary mx-auto shadow mb-3">
+                    @Model.Customer.FullName.Substring(0, 1).ToUpper()
+                </div>
+                <h4 class="text-white fw-bold mb-0">@Model.Customer.FullName</h4>
+                <div class="text-white-50 small mt-1">@Model.Customer.Email</div>
             </div>
-            <div class="card-body pt-0">
-                <ul class="list-group list-group-flush" style="font-size: 0.85rem;">
-                    <li class="list-group-item px-0 py-3">
-                        <div class="text-muted">Applicant Name</div>
-                        <div class="fw-bold mt-1">Rajesh Kumar</div>
-                    </li>
-                    <li class="list-group-item px-0 py-3">
-                        <div class="text-muted">Loan Product</div>
-                        <div class="fw-bold mt-1">Home Purchase Loan</div>
-                    </li>
-                    <li class="list-group-item px-0 py-3">
-                        <div class="text-muted">Employment Type & Monthly Income</div>
-                        <div class="fw-bold mt-1">Salaried | ₹ 85,000 / mo</div>
-                    </li>
-                    <li class="list-group-item px-0 py-3">
-                        <div class="text-muted">Loan Purpose Detail</div>
-                        <div class="fw-bold mt-1">Purchase of flat in Bangalore</div>
-                    </li>
-                </ul>
+            <div class="card-body px-4 pb-4" style="margin-top: -20px; background: white; border-radius: 20px 20px 0 0;">
+                <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                    <span class="text-muted small">Status</span>
+                    <span class="fw-bold text-primary">@Model.Status.ToString()</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                    <span class="text-muted small">Phone</span>
+                    <span class="fw-semibold">@Model.Customer.PhoneNumber</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                    <span class="text-muted small">Product</span>
+                    <span class="fw-semibold">@Model.Product.ProductName</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                    <span class="text-muted small">Requested Amount</span>
+                    <span class="fw-bold text-success">&#8377; @Model.RequestedAmount.ToString("N0")</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">Annual Income</span>
+                    <span class="fw-semibold">&#8377; @Model.AnnualIncome.ToString("N0")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <!-- Tabs -->
+        <ul class="nav nav-pills mb-4 gap-2" id="detailTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active rounded-pill px-4 shadow-sm" id="kyc-tab" data-bs-toggle="tab" data-bs-target="#kyc" type="button" role="tab">
+                    <i class="fa-solid fa-id-card me-2"></i> KYC & Documents
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-pill px-4 shadow-sm" id="credit-tab" data-bs-toggle="tab" data-bs-target="#credit" type="button" role="tab">
+                    <i class="fa-solid fa-gauge-high me-2"></i> Credit Score
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="detailTabsContent">
+            <!-- KYC & Documents Tab -->
+            <div class="tab-pane fade show active" id="kyc" role="tabpanel">
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h5 class="fw-bold text-dark m-0">KYC Verification</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        @if (kyc == null)
+                        {
+                            <div class="text-center py-4 text-muted">
+                                <i class="fa-solid fa-triangle-exclamation fa-3x mb-3 text-warning"></i>
+                                <h6>KYC not submitted yet.</h6>
+                                <p class="small">Initiate KYC to notify the customer to provide their details.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <label class="small text-muted mb-1">PAN Number</label>
+                                    <div class="fw-bold">@kyc.PanNumber</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small text-muted mb-1">Aadhaar Number</label>
+                                    <div class="fw-bold">@kyc.AadhaarNumber</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small text-muted mb-1">DOB / Gender</label>
+                                    <div class="fw-semibold">@kyc.DateOfBirth.ToString("dd MMM yyyy") (@kyc.Gender)</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small text-muted mb-1">Status</label>
+                                    <div>
+                                        <span class="badge bg-@(kyc.VerificationStatus == LOCPS.Enums.KycStatus.Verified ? "success" : (kyc.VerificationStatus == LOCPS.Enums.KycStatus.Rejected ? "danger" : "warning text-dark")) rounded-pill">
+                                            @kyc.VerificationStatus.ToString()
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            @if (kyc.VerificationStatus == LOCPS.Enums.KycStatus.Pending)
+                            {
+                                <hr class="my-4" />
+                                <h6 class="fw-bold mb-3">Overall KYC Decision</h6>
+                                <form asp-controller="Kyc" asp-action="Verify" method="post">
+                                    <input type="hidden" name="kycId" value="@kyc.KycId" />
+                                    <input type="hidden" name="applicationId" value="@Model.ApplicationId" />
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted">Remarks (Optional)</label>
+                                        <textarea name="remarks" class="form-control rounded-3 bg-light shadow-none" rows="2" placeholder="Add remarks..."></textarea>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" name="status" value="@LOCPS.Enums.KycStatus.Verified" class="btn btn-success px-4 rounded-pill shadow-sm">Approve KYC</button>
+                                        <button type="submit" name="status" value="@LOCPS.Enums.KycStatus.Rejected" class="btn btn-danger px-4 rounded-pill shadow-sm">Reject KYC</button>
+                                    </div>
+                                </form>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h5 class="fw-bold text-dark m-0">Uploaded Documents</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (!docs.Any())
+                        {
+                            <div class="text-center py-5 text-muted">
+                                <i class="fa-solid fa-folder-open fa-3x mb-3 text-light"></i>
+                                <p class="mb-0">No documents uploaded.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <ul class="list-group list-group-flush rounded-bottom-4">
+                                @foreach (var doc in docs)
+                                {
+                                    <li class="list-group-item p-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="bg-light p-3 rounded-3 text-primary">
+                                                    <i class="fa-regular fa-file-pdf fa-xl"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-1 fw-bold">@doc.DocumentType.ToString()</h6>
+                                                    <a href="~/@doc.FilePath" target="_blank" class="text-decoration-none small">
+                                                        <i class="fa-solid fa-download me-1"></i> @doc.FileName
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-@(doc.DocumentStatus == LOCPS.Enums.DocumentStatus.Verified ? "success" : (doc.DocumentStatus == LOCPS.Enums.DocumentStatus.Rejected ? "danger" : "warning text-dark")) rounded-pill px-3 py-2">
+                                                @doc.DocumentStatus.ToString()
+                                            </span>
+                                        </div>
+                                        @if (doc.DocumentStatus == LOCPS.Enums.DocumentStatus.Pending)
+                                        {
+                                            <form asp-controller="Document" asp-action="Verify" method="post" class="bg-light p-3 rounded-3 mt-2">
+                                                <input type="hidden" name="documentId" value="@doc.DocumentId" />
+                                                <input type="hidden" name="applicationId" value="@Model.ApplicationId" />
+                                                <div class="row align-items-end g-2">
+                                                    <div class="col-md-8">
+                                                        <input type="text" name="remarks" class="form-control form-control-sm shadow-none bg-white" placeholder="Verification remarks..." />
+                                                    </div>
+                                                    <div class="col-md-4 d-flex gap-2">
+                                                        <button type="submit" name="status" value="@LOCPS.Enums.DocumentStatus.Verified" class="btn btn-sm btn-success flex-fill shadow-sm"><i class="fa-solid fa-check"></i> Accept</button>
+                                                        <button type="submit" name="status" value="@LOCPS.Enums.DocumentStatus.Rejected" class="btn btn-sm btn-danger flex-fill shadow-sm"><i class="fa-solid fa-xmark"></i> Reject</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        }
+                                        else if (!string.IsNullOrEmpty(doc.Remarks))
+                                        {
+                                            <div class="alert alert-secondary mt-2 mb-0 py-2 small border-0"><i class="fa-solid fa-comment-dots me-2"></i><strong>Remarks:</strong> @doc.Remarks</div>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Credit Score Tab -->
+            <div class="tab-pane fade" id="credit" role="tabpanel">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold text-dark m-0">Credit Engine Evaluation</h5>
+                        @if (credit == null && Model.Status >= LOCPS.Enums.ApplicationStatus.KYCVerified)
+                        {
+                            <form asp-controller="Credit" asp-action="Evaluate" method="post">
+                                <input type="hidden" name="applicationId" value="@Model.ApplicationId" />
+                                <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm">
+                                    <i class="fa-solid fa-bolt me-1"></i> Run Evaluation
+                                </button>
+                            </form>
+                        }
+                    </div>
+                    <div class="card-body p-4">
+                        @if (credit == null)
+                        {
+                            <div class="text-center py-5 text-muted">
+                                <i class="fa-solid fa-magnifying-glass-chart fa-3x mb-3 text-light"></i>
+                                <h6>Credit evaluation not yet performed.</h6>
+                                <p class="small">Complete KYC verification to unlock credit evaluation.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row align-items-center mb-5">
+                                <div class="col-md-5 text-center border-end">
+                                    <h6 class="text-muted text-uppercase mb-3">Overall Credit Score</h6>
+                                    @{
+                                        string color = credit.CreditScore >= 700 ? "text-success" : (credit.CreditScore >= 600 ? "text-warning" : "text-danger");
+                                    }
+                                    <h1 class="display-3 fw-bolder @color mb-0">@credit.CreditScore</h1>
+                                    <p class="text-muted mt-2">Scale: 300 - 900</p>
+                                </div>
+                                <div class="col-md-7 ps-4">
+                                    <h6 class="fw-bold mb-3">Evaluation Metrics</h6>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Debt-to-Income Ratio</span>
+                                        <span class="fw-semibold">@credit.DebitToIncomeRatio.ToString("F2")%</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Payment History Score</span>
+                                        <span class="fw-semibold">@credit.PaymentHistoryScore</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Evaluation Date</span>
+                                        <span class="fw-semibold">@credit.EvaluatedDate?.ToString("MMM dd, yyyy HH:mm")</span>
+                                    </div>
+                                    <hr />
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted">Recommendation</span>
+                                        <span class="badge bg-@(credit.CreditRecommendation == LOCPS.Enums.CreditRecommendation.Approved ? "success" : "danger") px-3 py-2 rounded-pill shadow-sm">
+                                            @credit.CreditRecommendation.ToString()
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .avatar-circle-lg {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+</style>

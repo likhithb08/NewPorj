@@ -1,68 +1,155 @@
-@model LOCPS.Models.User;
+@model LOCPS.ViewModels.Dashboard.DashboardViewModel
+@using LOCPS.Enums
+
 @{
     ViewData["Title"] = "Dashboard";
     ViewData["CurrentStep"] = "Dashboard";
+
+    string StatusClass(ApplicationStatus s) => s switch
+    {
+        ApplicationStatus.Submitted => "pending",
+        ApplicationStatus.KYCPending => "pending",
+        ApplicationStatus.KYCVerified => "processing",
+        ApplicationStatus.UnderReview => "processing",
+        ApplicationStatus.CreditEvaluated => "processing",
+        ApplicationStatus.Approved => "approved",
+        ApplicationStatus.Disbursed => "approved",
+        ApplicationStatus.Closed => "approved",
+        ApplicationStatus.Rejected => "rejected",
+        _ => "pending"
+    };
 }
 
 <div class="row mb-4">
     <div class="col-12">
-        <h1 class="h3 fw-bold text-dark mb-1">Loan Officer Command Desk</h1>
-        <p class="text-muted">Review loan applications, verify compliance documents, and calculate risk credit scores.</p>
+        <div class="rounded-4 p-4 shadow-sm text-white position-relative overflow-hidden"
+             style="background: linear-gradient(135deg, #0C4A6E 0%, #0369A1 60%, #0EA5E9 100%);">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="fw-bold text-white mb-1">@Model.RoleTitle</h2>
+                    <p class="text-white-50 mb-0">@Model.RoleDescription</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a asp-controller="Loan" asp-action="Index" class="btn btn-light fw-semibold px-4">
+                        <i class="fa-solid fa-file-invoice-dollar me-2 text-primary"></i>All Applications
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3 border-bottom"><h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-folder-open text-primary me-2"></i> Application Document Validation Queue</h6></div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table align-middle m-0">
-                        <thead><tr><th>Application ID</th><th>Customer</th><th>Requested Amount</th><th>Product Type</th><th>Progress State</th><th class="text-end">Actions</th></tr></thead>
-                        <tbody>
-                            <tr><td class="fw-bold">LOC-9844-32</td><td>Rajesh Kumar</td><td>₹ 45,00,000</td><td>Home Purchase Loan</td><td><span class="badge-status badge-status-processing">Docs Pending</span></td><td class="text-end"><a href="/Document/Validate/9844" class="btn btn-sm btn-outline-primary">Validate</a></td></tr>
-                            <tr><td class="fw-bold">LOC-4412-99</td><td>Amit Sharma</td><td>₹ 12,00,000</td><td>Commercial Equipment</td><td><span class="badge-status badge-status-pending">KYC Pending</span></td><td class="text-end"><a href="/Kyc/Verify/4412" class="btn btn-sm btn-outline-success">Verify KYC</a></td></tr>
-                            <tr><td class="fw-bold">LOC-9012-55</td><td>Deepa Balakrishnan</td><td>₹ 3,50,000</td><td>Personal Express</td><td><span class="badge-status badge-status-processing">Docs Pending</span></td><td class="text-end"><a href="/Document/Validate/9012" class="btn btn-sm btn-outline-primary">Validate</a></td></tr>
-                            <tr><td class="fw-bold">LOC-3344-18</td><td>Suresh Prabhu</td><td>₹ 22,00,000</td><td>Home Purchase Loan</td><td><span class="badge-status badge-status-pending">New Application</span></td><td class="text-end"><a href="/Kyc/Verify/3344" class="btn btn-sm btn-outline-success">Verify KYC</a></td></tr>
-                            <tr><td class="fw-bold">LOC-5566-77</td><td>Priya Nair</td><td>₹ 2,50,000</td><td>Personal Express</td><td><span class="badge-status badge-status-rejected">Rejected</span></td><td class="text-end"><a href="/Loan/Details/5566" class="btn btn-sm btn-light border">View</a></td></tr>
-                        </tbody>
-                    </table>
-                </div>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card-admin">
+            <div class="sca-icon sca-blue"><i class="fa-solid fa-inbox"></i></div>
+            <div>
+                <h3 class="fw-bold text-dark mb-0">@Model.TotalApplications</h3>
+                <div class="text-muted small">Total in Queue</div>
             </div>
         </div>
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3 border-bottom"><h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-calculator text-primary me-2"></i> Credit Scoring Pending Queue</h6></div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table align-middle m-0">
-                        <thead><tr><th>Application ID</th><th>Customer</th><th>Sanction Amount</th><th>Product Type</th><th>Document Status</th><th class="text-end">Actions</th></tr></thead>
-                        <tbody>
-                            <tr><td class="fw-bold">LOC-7788-12</td><td>Sunitha Rao</td><td>₹ 5,00,000</td><td>Personal Express</td><td><span class="badge-status badge-status-approved">All Verified</span></td><td class="text-end"><a href="/Credit/Evaluate/7788" class="btn btn-sm btn-outline-primary">Score</a></td></tr>
-                            <tr><td class="fw-bold">LOC-1122-33</td><td>Vikram Singh</td><td>₹ 60,00,000</td><td>Home Purchase Loan</td><td><span class="badge-status badge-status-approved">All Verified</span></td><td class="text-end"><a href="/Credit/Evaluate/1122" class="btn btn-sm btn-outline-primary">Score</a></td></tr>
-                            <tr><td class="fw-bold">LOC-6677-44</td><td>Deepa Balakrishnan</td><td>₹ 3,50,000</td><td>Personal Express</td><td><span class="badge-status badge-status-approved">All Verified</span></td><td class="text-end"><a href="/Credit/Evaluate/6677" class="btn btn-sm btn-outline-primary">Score</a></td></tr>
-                            <tr><td class="fw-bold">LOC-8899-55</td><td>Suresh Prabhu</td><td>₹ 22,00,000</td><td>Home Purchase Loan</td><td><span class="badge-status badge-status-approved">All Verified</span></td><td class="text-end"><a href="/Credit/Evaluate/8899" class="btn btn-sm btn-outline-primary">Score</a></td></tr>
-                            <tr><td class="fw-bold">LOC-2233-66</td><td>Amit Sharma</td><td>₹ 12,00,000</td><td>Commercial Equipment</td><td><span class="badge-status badge-status-processing">Partial</span></td><td class="text-end"><a href="/Document/Validate/2233" class="btn btn-sm btn-outline-secondary">Review Docs</a></td></tr>
-                        </tbody>
-                    </table>
-                </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card-admin">
+            <div class="sca-icon sca-orange"><i class="fa-solid fa-id-card"></i></div>
+            <div>
+                <h3 class="fw-bold text-dark mb-0">@Model.PendingKyc</h3>
+                <div class="text-muted small">KYC Pending</div>
             </div>
         </div>
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3 border-bottom"><h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-circle-check text-success me-2"></i> Verified Applications (Sent to Underwriter)</h6></div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table align-middle m-0">
-                        <thead><tr><th>Application ID</th><th>Customer</th><th>Sanction Amount</th><th>Product Type</th><th>Calculated CIBIL</th><th>Status</th></tr></thead>
-                        <tbody>
-                            <tr><td class="fw-bold">LOC-9844-32</td><td>Rajesh Kumar</td><td>₹ 45,00,000</td><td>Home Purchase Loan</td><td><span class="fw-bold text-success">785</span></td><td><span class="badge-status badge-status-approved">Forwarded</span></td></tr>
-                            <tr><td class="fw-bold">LOC-7788-12</td><td>Sunitha Rao</td><td>₹ 5,00,000</td><td>Personal Express</td><td><span class="fw-bold text-success">742</span></td><td><span class="badge-status badge-status-approved">Forwarded</span></td></tr>
-                            <tr><td class="fw-bold">LOC-1122-33</td><td>Vikram Singh</td><td>₹ 60,00,000</td><td>Home Purchase Loan</td><td><span class="fw-bold text-info">718</span></td><td><span class="badge-status badge-status-approved">Forwarded</span></td></tr>
-                            <tr><td class="fw-bold">LOC-4455-88</td><td>Deepa Balakrishnan</td><td>₹ 3,50,000</td><td>Personal Express</td><td><span class="fw-bold text-success">761</span></td><td><span class="badge-status badge-status-approved">Forwarded</span></td></tr>
-                            <tr><td class="fw-bold">LOC-9900-11</td><td>Suresh Prabhu</td><td>₹ 22,00,000</td><td>Home Purchase Loan</td><td><span class="fw-bold text-warning">692</span></td><td><span class="badge-status badge-status-approved">Forwarded</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card-admin">
+            <div class="sca-icon sca-purple"><i class="fa-solid fa-gauge-high"></i></div>
+            <div>
+                <h3 class="fw-bold text-dark mb-0">@Model.PendingApprovals</h3>
+                <div class="text-muted small">Credit Pending</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card-admin">
+            <div class="sca-icon sca-green"><i class="fa-solid fa-box-archive"></i></div>
+            <div>
+                <h3 class="fw-bold text-dark mb-0">@Model.ActiveProducts</h3>
+                <div class="text-muted small">Active Products</div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold text-dark m-0">
+            <i class="fa-solid fa-folder-open text-primary me-2"></i>Application Processing Queue
+        </h6>
+        <a asp-controller="Loan" asp-action="Index" class="btn btn-sm btn-light border">View All</a>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.RecentApplications.Any())
+        {
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Application ID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Applied</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var app in Model.RecentApplications)
+                        {
+                            <tr>
+                                <td><span class="fw-bold text-primary">@app.ApplicationNumber</span></td>
+                                <td>@app.CustomerName</td>
+                                <td class="text-muted small">@app.ProductName</td>
+                                <td>₹ @app.RequestedAmount.ToString("N0")</td>
+                                <td><span class="badge-status badge-status-@StatusClass(app.Status)">@app.Status</span></td>
+                                <td class="text-muted small">@app.CreatedAt.ToString("dd MMM")</td>
+                                <td class="text-end">
+                                    <a asp-controller="Loan" asp-action="Details" asp-route-id="@app.ApplicationId"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fa-solid fa-eye me-1"></i>Review
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fa-solid fa-inbox text-muted fs-2 mb-3 d-block"></i>
+                <p class="text-muted">No applications in queue yet.</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+<style>
+    .stat-card-admin {
+        background: #fff; border-radius: 12px; padding: 1.2rem;
+        display: flex; align-items: center; gap: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.04);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card-admin:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .sca-icon {
+        width: 52px; height: 52px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem; flex-shrink: 0;
+    }
+    .sca-blue { background: #DBEAFE; color: #1D4ED8; }
+    .sca-orange { background: #FED7AA; color: #C2410C; }
+    .sca-purple { background: #EDE9FE; color: #7C3AED; }
+    .sca-green { background: #D1FAE5; color: #059669; }
+</style>
+}

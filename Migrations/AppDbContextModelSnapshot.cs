@@ -17,7 +17,7 @@ namespace LOCPS.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -39,16 +39,16 @@ namespace LOCPS.Migrations
                     b.Property<int?>("ApprovalStatus")
                         .HasColumnType("int");
 
-                    b.Property<long?>("ApprovedAmount")
-                        .HasPrecision(13, 2)
-                        .HasColumnType("bigint");
+                    b.Property<decimal?>("ApprovedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ApprovedByUserId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("ApprovedInterestRate")
-                        .HasPrecision(3, 2)
-                        .HasColumnType("decimal(3,2)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<int>("ApprovedTenureMonths")
                         .HasColumnType("int");
@@ -133,7 +133,7 @@ namespace LOCPS.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<int?>("CreditRecomendations")
+                    b.Property<int?>("CreditRecommendation")
                         .HasColumnType("int");
 
                     b.Property<int>("CreditScore")
@@ -173,15 +173,14 @@ namespace LOCPS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DisbursmentId"));
 
-                    b.Property<int>("AmountApproved")
+                    b.Property<decimal>("AmountApproved")
                         .HasPrecision(13, 2)
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(13,2)");
 
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
                     b.Property<long>("BankAccountNumber")
-                        .HasPrecision(12)
                         .HasColumnType("bigint");
 
                     b.Property<string>("BankName")
@@ -248,6 +247,10 @@ namespace LOCPS.Migrations
                     b.Property<int?>("KycId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("datetime2");
 
@@ -284,9 +287,9 @@ namespace LOCPS.Migrations
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmiAmount")
+                    b.Property<decimal>("EmiAmount")
                         .HasPrecision(13, 2)
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(13,2)");
 
                     b.Property<int>("EmiNumber")
                         .HasColumnType("int");
@@ -320,14 +323,14 @@ namespace LOCPS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KycId"));
 
+                    b.Property<string>("AadhaarNumber")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
                     b.Property<string>("AddressProof")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("AdhaarNumber")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
 
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
@@ -356,8 +359,12 @@ namespace LOCPS.Migrations
 
                     b.Property<string>("PanNumber")
                         .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("VerificationStatus")
                         .HasColumnType("int");
@@ -407,7 +414,7 @@ namespace LOCPS.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("EmployeementType")
+                    b.Property<string>("EmploymentType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -565,10 +572,7 @@ namespace LOCPS.Migrations
             modelBuilder.Entity("LOCPS.Models.Role", b =>
                 {
                     b.Property<int>("RoleId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -586,6 +590,42 @@ namespace LOCPS.Migrations
                     b.HasKey("RoleId");
 
                     b.ToTable("Role");
+                });
+
+            modelBuilder.Entity("LOCPS.Models.ScoringConfig", b =>
+                {
+                    b.Property<int>("ConfigId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BureauScoreWeight")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CreditHistoryAgeWeight")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CreditUtilizationWeight")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DebtToIncomeWeight")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MinCreditScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepaymentConsistencyWeight")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ConfigId");
+
+                    b.HasIndex("UpdatedByUserId");
+
+                    b.ToTable("ScoringConfigs");
                 });
 
             modelBuilder.Entity("LOCPS.Models.User", b =>
@@ -835,6 +875,16 @@ namespace LOCPS.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("LOCPS.Models.ScoringConfig", b =>
+                {
+                    b.HasOne("LOCPS.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("UpdatedByUser");
                 });
 
             modelBuilder.Entity("LOCPS.Models.User", b =>

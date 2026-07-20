@@ -1,4 +1,6 @@
+using LOCPS.Common;
 using LOCPS.Enums;
+using LOCPS.Models;
 
 namespace LOCPS.ViewModels.Dashboard;
 
@@ -24,4 +26,12 @@ public class DashboardApplicationRowViewModel
     public decimal RequestedAmount { get; set; }
     public ApplicationStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
+}
+
+public class CustomerDashboardViewModel
+{
+    public User User { get; set; } = null!;
+    public LoanApplication? LatestApplication { get; set; }
+    public PagedResult<LoanApplication> Applications { get; set; } = new();
+    public IEnumerable<Notification> Notifications { get; set; } = Enumerable.Empty<Notification>();
 }

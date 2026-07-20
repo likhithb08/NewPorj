@@ -1,6 +1,7 @@
 ﻿using LOCPS.Repositories.Interfaces;
 using LOCPS.Models;
 using LOCPS.Data;
+using LOCPS.Enums;
 using Microsoft.EntityFrameworkCore;
 namespace LOCPS.Repositories.Implementation
 {

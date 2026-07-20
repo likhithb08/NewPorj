@@ -1,6 +1,7 @@
+using LOCPS.Constants;
 using LOCPS.Models;
 using LOCPS.Services.Interfaces;
-
+using LOCPS.ViewModels.Users;
 using Microsoft.AspNetCore.Mvc;
 using LOCPS.Enums;
 
@@ -8,37 +9,132 @@ namespace LOCPS.Controllers
 {
     public class UserManagementController : Controller
     {
-        private readonly IUserServices _userServices;
+        private readonly IUserService _userService;
 
-        public UserManagementController(IUserServices userServices)
+        public UserManagementController(IUserService userService)
         {
-            _userServices = userServices;
+            _userService = userService;
         }
 
-        public IActionResult Index() => View();
+        // LIST all users
+        public async Task<IActionResult> Index()
+        {
+            var users = await _userService.GetAllUsersAsync();
+            var vms = users.Select(u => new UserListViewModel
+            {
+                UserId    = u.UserId,
+                UserName  = u.UserName,
+                Email     = u.Email,
+                FullName  = u.FullName,
+                RoleName  = u.Role?.Roles.ToString() ?? RoleConstants.GetRoleFromId(u.RoleId).ToString(),
+                IsActive  = u.IsActive,
+                CreatedDate = u.CreatedDate
+            }).ToList();
+            return View(vms);
+        }
 
-        public IActionResult Create() => View();
+        // CREATE – GET
+        public IActionResult Create() => View(new UserCreateViewModel());
 
+        // CREATE – POST
         [HttpPost]
-        public async Task<IActionResult> Create(User user, string assignedRole)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(UserCreateViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(user);
+                return View(model);
 
-            // Admin can only create Loan Officer (2) or Underwriter (3) accounts
-            // Map string role to Roles enum value
-            user.RoleId = assignedRole switch
+            try
             {
-                "officer" => 3,      // LoanOfficer = 3
-                "underwriter" => 4,  // UnderWriter = 4
-                "admin" => 2,        // Admin = 2
-                _ => 3            // Default to Loan Officer
-            };
-
-            await _userServices.RegisterUserAsync(user);
-            return RedirectToAction("Index");
+                await _userService.RegisterUserAsync(model);
+                TempData["Success"] = "User account created successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(model);
+            }
         }
 
-        public IActionResult Edit(int id) => View();
+        // EDIT – GET
+        public async Task<IActionResult> Edit(int id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var vm = new UserUpdateViewModel
+            {
+                UserId      = user.UserId,
+                UserName    = user.UserName,
+                Email       = user.Email,
+                FullName    = user.FullName,
+                PhoneNumber = user.PhoneNumber,
+                RoleId      = user.RoleId,
+                IsActive    = user.IsActive
+            };
+            return View(vm);
+        }
+
+        // EDIT – POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(UserUpdateViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
+            {
+                await _userService.UpdateUserAsync(model);
+                TempData["Success"] = "User account updated successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(model);
+            }
+        }
+
+        // DELETE – POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _userService.DeleteUserAsync(id);
+                TempData["Success"] = "User account deleted.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // TOGGLE ACTIVE – POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleActive(int id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var vm = new UserUpdateViewModel
+            {
+                UserId      = user.UserId,
+                UserName    = user.UserName,
+                Email       = user.Email,
+                FullName    = user.FullName,
+                PhoneNumber = user.PhoneNumber,
+                RoleId      = user.RoleId,
+                IsActive    = !user.IsActive   // toggle
+            };
+            await _userService.UpdateUserAsync(vm);
+            TempData["Success"] = $"User {(vm.IsActive ? "activated" : "deactivated")} successfully.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

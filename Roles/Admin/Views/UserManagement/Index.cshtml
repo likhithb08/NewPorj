@@ -1,5 +1,8 @@
+@model IEnumerable<LOCPS.ViewModels.Users.UserListViewModel>
 @{
     ViewData["Title"] = "User Management";
+    var successMsg = TempData["Success"] as string;
+    var errorMsg   = TempData["Error"]   as string;
 }
 
 <div class="row mb-4 align-items-center">
@@ -8,94 +11,167 @@
         <p class="text-muted mb-0">Manage staff accounts, roles and access permissions.</p>
     </div>
     <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
-        <a href="/UserManagement/Create" class="btn btn-primary px-4 py-2"><i class="fa-solid fa-user-plus me-2"></i> Add New User</a>
+        <a asp-action="Create" class="btn btn-primary px-4 py-2">
+            <i class="fa-solid fa-user-plus me-2"></i> Add New User
+        </a>
     </div>
 </div>
 
+@if (successMsg != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-circle-check me-2"></i>@successMsg
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (errorMsg != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i>@errorMsg
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white border-0 py-3">
-        <div class="row g-3">
+        <div class="row g-3 align-items-center">
             <div class="col-md-5">
-                <div class="search-bar d-flex align-items-center bg-light px-3 py-1 rounded-pill" style="border: 1px solid var(--border-color);">
+                <div class="search-bar d-flex align-items-center bg-light px-3 py-1 rounded-pill"
+                     style="border: 1px solid var(--border-color);">
                     <i class="fa-solid fa-magnifying-glass text-muted me-2"></i>
-                    <input type="text" class="form-control border-0 bg-transparent py-1 shadow-none" placeholder="Search by name, email or role..." style="font-size: 0.85rem;" />
+                    <input type="text" id="userSearch" class="form-control border-0 bg-transparent py-1 shadow-none"
+                           placeholder="Search by name, email or role..." style="font-size: 0.85rem;" />
                 </div>
             </div>
             <div class="col-md-3">
-                <select class="form-select bg-light border-0 py-2 shadow-none" style="font-size: 0.85rem; border-radius: 50rem;">
-                    <option value="all">All Roles</option>
-                    <option value="admin">Admin</option>
-                    <option value="loan officer">Loan Officer</option>
-                    <option value="underwriter">Underwriter</option>
+                <select id="roleFilter" class="form-select bg-light border-0 py-2 shadow-none"
+                        style="font-size: 0.85rem; border-radius: 50rem;">
+                    <option value="">All Roles</option>
+                    <option value="Admin">Admin</option>
+                    <option value="LoanOfficer">Loan Officer</option>
+                    <option value="UnderWriter">Underwriter</option>
+                    <option value="Customer">Customer</option>
                 </select>
+            </div>
+            <div class="col-md-4 text-end">
+                <span class="badge bg-secondary rounded-pill px-3 py-2">
+                    Total Users: <strong>@Model.Count()</strong>
+                </span>
             </div>
         </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive border-0">
-            <table class="table align-middle">
+            <table class="table align-middle" id="userTable">
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
-                        <th>Branch</th>
                         <th>Status</th>
-                        <th>Last Login</th>
+                        <th>Created</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><div class="d-flex align-items-center gap-2"><div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.75rem; font-weight: 700;">L</div><span class="fw-semibold">Likhith Kumar</span></div></td>
-                        <td>likhith.k@locps.in</td>
-                        <td><span class="badge bg-primary rounded-pill px-2">Loan Officer</span></td>
-                        <td>Bangalore HQ</td>
-                        <td><span class="badge-status badge-status-approved">Active</span></td>
-                        <td>2026-06-24</td>
-                        <td class="text-end"><a href="/UserManagement/Edit/1" class="btn btn-sm btn-light border" title="Edit"><i class="fa-solid fa-pen-to-square text-muted"></i></a></td>
-                    </tr>
-                    <tr>
-                        <td><div class="d-flex align-items-center gap-2"><div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.75rem; font-weight: 700;">A</div><span class="fw-semibold">Anjali Sharma</span></div></td>
-                        <td>anjali.s@locps.in</td>
-                        <td><span class="badge bg-info rounded-pill px-2">Underwriter</span></td>
-                        <td>Bangalore HQ</td>
-                        <td><span class="badge-status badge-status-approved">Active</span></td>
-                        <td>2026-06-24</td>
-                        <td class="text-end"><a href="/UserManagement/Edit/2" class="btn btn-sm btn-light border" title="Edit"><i class="fa-solid fa-pen-to-square text-muted"></i></a></td>
-                    </tr>
-                    <tr>
-                        <td><div class="d-flex align-items-center gap-2"><div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.75rem; font-weight: 700;">S</div><span class="fw-semibold">System Administrator</span></div></td>
-                        <td>admin@locps.in</td>
-                        <td><span class="badge bg-danger rounded-pill px-2">Admin</span></td>
-                        <td>All Branches</td>
-                        <td><span class="badge-status badge-status-approved">Active</span></td>
-                        <td>2026-06-23</td>
-                        <td class="text-end"><a href="/UserManagement/Edit/3" class="btn btn-sm btn-light border" title="Edit"><i class="fa-solid fa-pen-to-square text-muted"></i></a></td>
-                    </tr>
-                    <tr>
-                        <td><div class="d-flex align-items-center gap-2"><div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.75rem; font-weight: 700;">P</div><span class="fw-semibold">Pradeep Menon</span></div></td>
-                        <td>pradeep.m@locps.in</td>
-                        <td><span class="badge bg-primary rounded-pill px-2">Loan Officer</span></td>
-                        <td>Chennai Branch</td>
-                        <td><span class="badge-status badge-status-approved">Active</span></td>
-                        <td>2026-06-22</td>
-                        <td class="text-end"><a href="/UserManagement/Edit/4" class="btn btn-sm btn-light border" title="Edit"><i class="fa-solid fa-pen-to-square text-muted"></i></a></td>
-                    </tr>
-                    <tr>
-                        <td><div class="d-flex align-items-center gap-2"><div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.75rem; font-weight: 700;">K</div><span class="fw-semibold">Kavitha Rajan</span></div></td>
-                        <td>kavitha.r@locps.in</td>
-                        <td><span class="badge bg-info rounded-pill px-2">Underwriter</span></td>
-                        <td>Mumbai Branch</td>
-                        <td><span class="badge-status badge-status-rejected">Inactive</span></td>
-                        <td>2026-06-10</td>
-                        <td class="text-end"><a href="/UserManagement/Edit/5" class="btn btn-sm btn-light border" title="Edit"><i class="fa-solid fa-pen-to-square text-muted"></i></a></td>
-                    </tr>
+                    @foreach (var user in Model)
+                    {
+                        <tr data-name="@user.FullName.ToLower()" data-email="@user.Email.ToLower()" data-role="@user.RoleName">
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:34px;height:34px;font-size:0.8rem;font-weight:700;flex-shrink:0;">
+                                        @user.FullName.Substring(0, 1).ToUpper()
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold">@user.FullName</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">@@@user.UserName</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-muted small">@user.Email</td>
+                            <td>
+                                @{
+                                    var badgeClass = user.RoleName switch
+                                    {
+                                        "Admin"       => "bg-danger",
+                                        "LoanOfficer" => "bg-primary",
+                                        "UnderWriter" => "bg-info",
+                                        "Customer"    => "bg-success",
+                                        _             => "bg-secondary"
+                                    };
+                                    var roleLabel = user.RoleName switch
+                                    {
+                                        "LoanOfficer" => "Loan Officer",
+                                        "UnderWriter" => "Underwriter",
+                                        _ => user.RoleName
+                                    };
+                                }
+                                <span class="badge @badgeClass rounded-pill px-2">@roleLabel</span>
+                            </td>
+                            <td>
+                                <span class="badge-status @(user.IsActive ? "badge-status-approved" : "badge-status-rejected")">
+                                    @(user.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td class="text-muted small">@user.CreatedDate.ToString("dd MMM yyyy")</td>
+                            <td class="text-end">
+                                <div class="d-flex gap-1 justify-content-end">
+                                    <a asp-action="Edit" asp-route-id="@user.UserId"
+                                       class="btn btn-sm btn-light border" title="Edit">
+                                        <i class="fa-solid fa-pen-to-square text-muted"></i>
+                                    </a>
+                                    <form asp-action="ToggleActive" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@user.UserId" />
+                                        <button type="submit"
+                                                class="btn btn-sm btn-light border"
+                                                title="@(user.IsActive ? "Deactivate" : "Activate")">
+                                            <i class="fa-solid @(user.IsActive ? "fa-toggle-on text-success" : "fa-toggle-off text-muted")"></i>
+                                        </button>
+                                    </form>
+                                    <form asp-action="Delete" method="post" class="d-inline"
+                                          onsubmit="return confirm('Delete this user account? This cannot be undone.');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@user.UserId" />
+                                        <button type="submit" class="btn btn-sm btn-light border text-danger" title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="fa-solid fa-users text-muted fs-2 mb-3 d-block"></i>
+                    <p class="text-muted">No users found. <a asp-action="Create">Create the first user.</a></p>
+                </div>
+            }
         </div>
     </div>
-    <div class="card-footer bg-white border-0 py-3">
-        @await Html.PartialAsync("_Pagination")
-    </div>
 </div>
+
+@section Scripts {
+<script>
+    const searchInput  = document.getElementById('userSearch');
+    const roleSelect   = document.getElementById('roleFilter');
+    const rows         = document.querySelectorAll('#userTable tbody tr');
+
+    function filterTable() {
+        const q    = searchInput.value.toLowerCase();
+        const role = roleSelect.value;
+        rows.forEach(row => {
+            const matchSearch = !q || row.dataset.name.includes(q) || row.dataset.email.includes(q);
+            const matchRole   = !role || row.dataset.role === role;
+            row.style.display = (matchSearch && matchRole) ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    roleSelect.addEventListener('change', filterTable);
+</script>
+}

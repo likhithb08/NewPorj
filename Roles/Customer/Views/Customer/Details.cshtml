@@ -1,0 +1,232 @@
+@model LOCPS.Models.LoanApplication
+@{
+    ViewData["Title"] = "Loan Application Details";
+    ViewData["CurrentStep"] = "Loan Application";
+    var kyc = ViewBag.Kyc as LOCPS.Models.Kyc;
+}
+
+<div class="row mb-4 align-items-center">
+    <div class="col-sm-6">
+        <h1 class="h3 fw-bold text-dark m-0">Application Details: @Model.ApplicationNumber</h1>
+        <p class="text-muted mb-0">Track and advance the origination steps for this application.</p>
+    </div>
+    <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+        <div class="d-flex gap-2 justify-content-sm-end">
+            <span class="badge bg-primary align-self-center px-3 py-2 rounded-pill">@Model.Status</span>
+            <a asp-action="Index" class="btn btn-light border px-3 py-2 rounded-pill">
+                <i class="fa-solid fa-arrow-left me-2"></i> Back
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Financial Overview -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4 rounded-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="card-title fw-bold text-dark m-0">Application Summary: @Model.Product?.ProductName</h5>
+            </div>
+            <div class="card-body pt-0">
+                <div class="row g-3">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="bg-light p-3 rounded-4 text-center">
+                            <span class="text-muted small">Requested Amount</span>
+                            <h4 class="fw-bold text-dark mt-1">₹ @Model.RequestedAmount.ToString("N0")</h4>
+                        </div>
+                    </div>
+                    @if (Model.ApprovedAmount.HasValue)
+                    {
+                        <div class="col-md-6 col-lg-3">
+                            <div class="bg-light p-3 rounded-4 text-center">
+                                <span class="text-muted small">Approved Amount</span>
+                                <h4 class="fw-bold text-success mt-1">₹ @Model.ApprovedAmount.Value.ToString("N0")</h4>
+                            </div>
+                        </div>
+                    }
+                    <div class="col-md-6 col-lg-3">
+                        <div class="bg-light p-3 rounded-4 text-center">
+                            <span class="text-muted small">Annual Income</span>
+                            <h4 class="fw-bold text-primary mt-1">₹ @Model.AnnualIncome.ToString("N0")</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="bg-light p-3 rounded-4 text-center">
+                            <span class="text-muted small">Employment Type</span>
+                            <h4 class="fw-bold text-dark mt-1">@Model.EmploymentType</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KYC Status and Forms -->
+        @if (Model.Status == LOCPS.Enums.ApplicationStatus.KYCPending && kyc == null)
+        {
+            <div class="card border-0 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-primary text-white border-0 py-3 rounded-top-4">
+                    <h5 class="card-title fw-bold m-0"><i class="fa-solid fa-file-signature me-2"></i> Action Required: Complete KYC</h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted mb-4">Please provide your KYC details to proceed with your application.</p>
+                    <form asp-action="SubmitKyc" method="post">
+                        <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
+                        <input type="hidden" name="VerificationStatus" value="Pending" />
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="PanNumber" placeholder="PAN" required />
+                                    <label>PAN Number</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="AadhaarNumber" placeholder="Aadhaar" required />
+                                    <label>Aadhaar Number</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control" name="DateOfBirth" required />
+                                    <label>Date of Birth</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" name="Gender" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <label>Gender</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">Submit KYC Details</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else if (kyc != null)
+        {
+            <div class="card border-0 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="card-title fw-bold text-dark m-0">KYC Status</h5>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="text-muted small">Verification Status</div>
+                            <div class="fw-bold mt-1">
+                                <span class="badge bg-@(kyc.VerificationStatus == LOCPS.Enums.KycStatus.Verified ? "success" : kyc.VerificationStatus == LOCPS.Enums.KycStatus.Rejected ? "danger" : "warning text-dark") rounded-pill">
+                                    @kyc.VerificationStatus
+                                </span>
+                            </div>
+                        </div>
+                        @if (kyc.VerifiedDate.HasValue)
+                        {
+                            <div class="col-md-6">
+                                <div class="text-muted small">Verified Date</div>
+                                <div class="fw-bold mt-1">@kyc.VerifiedDate.Value.ToString("yyyy-MM-dd")</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="card-title fw-bold text-dark m-0">Upload Documents</h5>
+                </div>
+                <div class="card-body pt-0">
+                    <form asp-action="UploadDocument" method="post" enctype="multipart/form-data" class="d-flex gap-3 align-items-center">
+                        <input type="hidden" name="applicationId" value="@Model.ApplicationId" />
+                        <div class="flex-grow-1">
+                            <select name="documentType" class="form-select mb-2" required>
+                                <option value="">Select Document Type</option>
+                                <option value="IdentityProof">Identity Proof</option>
+                                <option value="AddressProof">Address Proof</option>
+                                <option value="IncomeProof">Income Proof</option>
+                            </select>
+                            <input type="file" name="file" class="form-control" required accept=".pdf,.jpg,.jpeg,.png" />
+                        </div>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm align-self-end h-100">Upload</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card border-0 shadow-sm mb-4 rounded-4">
+                <div class="card-body text-center py-5">
+                    <i class="fa-solid fa-clock text-muted fa-3x mb-3"></i>
+                    <h5 class="fw-bold">Application is Under Review</h5>
+                    <p class="text-muted">No actions required from your end right now. The loan officer will notify you if KYC is needed.</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Applicant Summary Card -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4 rounded-4">
+            <div class="card-header bg-white border-0 py-3">
+                <h6 class="fw-bold text-dark m-0">Information</h6>
+            </div>
+            <div class="card-body pt-0">
+                <ul class="list-group list-group-flush" style="font-size: 0.85rem;">
+                    <li class="list-group-item px-0 py-3">
+                        <div class="text-muted">Application Number</div>
+                        <div class="fw-bold mt-1">@Model.ApplicationNumber</div>
+                    </li>
+                    <li class="list-group-item px-0 py-3">
+                        <div class="text-muted">Loan Product</div>
+                        <div class="fw-bold mt-1">@Model.Product?.ProductName</div>
+                    </li>
+                    <li class="list-group-item px-0 py-3">
+                        <div class="text-muted">Customer Name</div>
+                        <div class="fw-bold mt-1">@Model.Customer?.FullName</div>
+                    </li>
+                    <li class="list-group-item px-0 py-3">
+                        <div class="text-muted">Employment Type</div>
+                        <div class="fw-bold mt-1">@Model.EmploymentType</div>
+                    </li>
+                    <li class="list-group-item px-0 py-3">
+                        <div class="text-muted">Status</div>
+                        <div class="fw-bold mt-1">@Model.Status</div>
+                    </li>
+                    <li class="list-group-item px-0 py-3">
+                        <div class="text-muted">Applied Date</div>
+                        <div class="fw-bold mt-1">@Model.CreatedAt.ToString("yyyy-MM-dd")</div>
+                    </li>
+                    @if (Model.LastUpdatedDate.HasValue)
+                    {
+                        <li class="list-group-item px-0 py-3">
+                            <div class="text-muted">Last Updated</div>
+                            <div class="fw-bold mt-1">@Model.LastUpdatedDate.Value.ToString("yyyy-MM-dd")</div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

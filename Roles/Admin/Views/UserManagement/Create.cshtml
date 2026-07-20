@@ -1,3 +1,4 @@
+@model LOCPS.ViewModels.Users.UserCreateViewModel
 @{
     ViewData["Title"] = "Add System User";
 }
@@ -12,50 +13,95 @@
 <div class="row">
     <div class="col-lg-7">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-3"><h5 class="fw-bold m-0">User Account Details</h5></div>
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="fw-bold m-0">User Account Details</h5>
+            </div>
             <div class="card-body">
-                <form method="post" action="/UserManagement/Create">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">User Name <span class="text-danger">*</span></label>
-                            <input type="text" name="UserName" class="form-control py-2 shadow-none" placeholder="e.g. pradeep_menon" required />
+                            <label asp-for="UserName" class="form-label fw-semibold text-muted small">
+                                Username <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="UserName" class="form-control py-2 shadow-none" placeholder="e.g. pradeep_menon" />
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" name="FullName" class="form-control py-2 shadow-none" placeholder="e.g. Pradeep Menon" required />
+                            <label asp-for="FullName" class="form-label fw-semibold text-muted small">
+                                Full Name <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="FullName" class="form-control py-2 shadow-none" placeholder="e.g. Pradeep Menon" />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Email Address <span class="text-danger">*</span></label>
-                            <input type="email" name="Email" class="form-control py-2 shadow-none" placeholder="e.g. pradeep@locps.in" required />
+                            <label asp-for="Email" class="form-label fw-semibold text-muted small">
+                                Email Address <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Email" class="form-control py-2 shadow-none" placeholder="e.g. pradeep@locps.in" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Phone Number <span class="text-danger">*</span></label>
-                            <input type="tel" name="PhoneNumber" class="form-control py-2 shadow-none" placeholder="e.g. +91 98765 43210" required />
+                            <label asp-for="PhoneNumber" class="form-label fw-semibold text-muted small">
+                                Phone Number <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="PhoneNumber" class="form-control py-2 shadow-none" placeholder="e.g. 9876543210" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Assigned Role <span class="text-danger">*</span></label>
-                            <select name="assignedRole" class="form-select py-2 shadow-none" required>
-                                <option value="" disabled selected>Select role</option>
-                                <option value="officer">Loan Officer</option>
-                                <option value="underwriter">UnderWriter</option>
-                                <option value="admin">System Admin</option>
+                            <label asp-for="RoleId" class="form-label fw-semibold text-muted small">
+                                Assigned Role <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="RoleId" class="form-select py-2 shadow-none">
+                                <option value="">-- Select Role --</option>
+                                <option value="3">Loan Officer</option>
+                                <option value="4">Underwriter</option>
+                                <option value="2">System Admin</option>
+                                <option value="1">Customer</option>
                             </select>
+                            <span asp-validation-for="RoleId" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Initial Password <span class="text-danger">*</span></label>
-                            <input type="password" name="PasswordHash" class="form-control py-2 shadow-none" placeholder="Temporary password" required minlength="6" />
+                            <label asp-for="Password" class="form-label fw-semibold text-muted small">
+                                Initial Password <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Password" type="password" class="form-control py-2 shadow-none" placeholder="Min 6 characters" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted small">Confirm Password <span class="text-danger">*</span></label>
-                            <input type="password" id="confirmPassword" class="form-control py-2 shadow-none" placeholder="Confirm password" required minlength="6" />
+                            <label class="form-label fw-semibold text-muted small">
+                                Confirm Password <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" id="confirmPassword" class="form-control py-2 shadow-none" placeholder="Re-enter password" />
+                            <div id="pwMismatch" class="text-danger small d-none">Passwords do not match.</div>
                         </div>
                     </div>
                     <div class="mt-4 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary px-4 py-2"><i class="fa-solid fa-user-plus me-2"></i> Create User Account</button>
-                        <a href="/UserManagement" class="btn btn-light border px-4 py-2">Cancel</a>
+                        <button type="submit" id="submitBtn" class="btn btn-primary px-4 py-2">
+                            <i class="fa-solid fa-user-plus me-2"></i> Create User Account
+                        </button>
+                        <a asp-action="Index" class="btn btn-light border px-4 py-2">Cancel</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    const pwd     = document.getElementById('Password');
+    const confirm = document.getElementById('confirmPassword');
+    const mismatch = document.getElementById('pwMismatch');
+    const btn     = document.getElementById('submitBtn');
+
+    function checkPwd() {
+        const ok = pwd.value === confirm.value;
+        mismatch.classList.toggle('d-none', ok);
+        btn.disabled = !ok;
+    }
+    pwd.addEventListener('input', checkPwd);
+    confirm.addEventListener('input', checkPwd);
+</script>
+}

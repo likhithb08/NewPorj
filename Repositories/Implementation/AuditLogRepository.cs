@@ -71,58 +71,10 @@ public class DocumentRepository : GenericRepository<Document>, IDocumentReposito
     public async Task<IEnumerable<Document>> GetByApplicationIdAsync(int applicationId) =>
         await _context.Document.Where(d => d.ApplicationId == applicationId).ToListAsync();
 
-    public async Task<Document> UpdateAsync(Document document)
+    public new async Task<Document> UpdateAsync(Document document)
     {
         _context.Document.Update(document);
         await _context.SaveChangesAsync();
         return document;
-    }
-}
-
-public class EmiRepository : GenericRepository<Emi>, IEmiRepository
-{
-    private readonly AppDbContext _context;
-
-    public EmiRepository(AppDbContext context) : base(context) => _context = context;
-
-    public async Task<Emi> CreateAsync(Emi emi)
-    {
-        await _context.Emis.AddAsync(emi);
-        await _context.SaveChangesAsync();
-        return emi;
-    }
-
-    public async Task<IEnumerable<Emi>> GetByApplicationIdAsync(int applicationId) =>
-        await _context.Emis.Where(e => e.ApplicationID == applicationId).OrderBy(e => e.EmiNumber).ToListAsync();
-
-    public async Task<Emi?> GetByIdAsync(int id) => await _context.Emis.FindAsync(id);
-
-    public async Task<Emi> UpdateAsync(Emi emi)
-    {
-        _context.Emis.Update(emi);
-        await _context.SaveChangesAsync();
-        return emi;
-    }
-
-    public async Task CreateScheduleAsync(int applicationId, decimal principal, decimal annualRate, int tenureMonths, DateTime startDate)
-    {
-        var monthlyRate = annualRate / 12m / 100m;
-        var emiAmount = monthlyRate == 0
-            ? principal / tenureMonths
-            : principal * monthlyRate * (decimal)Math.Pow((double)(1 + monthlyRate), tenureMonths)
-              / ((decimal)Math.Pow((double)(1 + monthlyRate), tenureMonths) - 1);
-
-        for (var i = 1; i <= tenureMonths; i++)
-        {
-            await _context.Emis.AddAsync(new Emi
-            {
-                ApplicationID = applicationId,
-                EmiNumber = i,
-                EmiAmount = (int)Math.Round(emiAmount),
-                DueDate = startDate.AddMonths(i),
-                Status = EmiStatus.Pending
-            });
-        }
-        await _context.SaveChangesAsync();
     }
 }

@@ -1,71 +1,243 @@
+@model LOCPS.Models.ScoringConfig
 @{
     ViewData["Title"] = "Scoring Engine Weights";
+    var successMsg = TempData["Success"] as string;
 }
 
 <div class="row mb-4">
     <div class="col-12">
         <h1 class="h3 fw-bold text-dark mb-1">Scoring Engine Configuration</h1>
-        <p class="text-muted">Adjust the credit risk weight parameters. Preview impact updates live.</p>
+        <p class="text-muted">Adjust credit risk weight parameters and minimum approval threshold. Changes take effect immediately.</p>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-lg-7">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-3">
-                <h5 class="fw-bold m-0">Risk Parameter Weights</h5>
-                <span class="text-muted small">Total allocation must equal <strong>100%</strong>.</span>
+@if (successMsg != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-circle-check me-2"></i>@successMsg
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<form asp-action="ScoringRules" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+    <input type="hidden" asp-for="ConfigId" />
+
+    <div class="row g-4">
+        @* Left: Parameter Weights *@
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold m-0">Risk Parameter Weights</h5>
+                        <span class="text-muted small">Total allocation must equal <strong>100%</strong>.</span>
+                    </div>
+                    <span id="totalBadge" class="badge bg-success px-3 py-2">100%</span>
+                </div>
+                <div class="card-body">
+
+                    @* Bureau Score *@
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-semibold small text-dark">Bureau Score (CIBIL)</span>
+                            <span class="fw-bold text-primary small"><span id="v_bureau">@Model.BureauScoreWeight</span>%</span>
+                        </div>
+                        <input asp-for="BureauScoreWeight" type="range" class="form-range scoring-slider"
+                               min="0" max="100" id="sl_bureau" oninput="updateSlider('sl_bureau','v_bureau')" />
+                        <span asp-validation-for="BureauScoreWeight" class="text-danger small"></span>
+                    </div>
+
+                    @* Debt-to-Income *@
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-semibold small text-dark">Debt-to-Income Ratio</span>
+                            <span class="fw-bold text-primary small"><span id="v_dti">@Model.DebtToIncomeWeight</span>%</span>
+                        </div>
+                        <input asp-for="DebtToIncomeWeight" type="range" class="form-range scoring-slider"
+                               min="0" max="100" id="sl_dti" oninput="updateSlider('sl_dti','v_dti')" />
+                        <span asp-validation-for="DebtToIncomeWeight" class="text-danger small"></span>
+                    </div>
+
+                    @* Credit History Age *@
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-semibold small text-dark">Credit History Age</span>
+                            <span class="fw-bold text-primary small"><span id="v_cha">@Model.CreditHistoryAgeWeight</span>%</span>
+                        </div>
+                        <input asp-for="CreditHistoryAgeWeight" type="range" class="form-range scoring-slider"
+                               min="0" max="100" id="sl_cha" oninput="updateSlider('sl_cha','v_cha')" />
+                        <span asp-validation-for="CreditHistoryAgeWeight" class="text-danger small"></span>
+                    </div>
+
+                    @* Repayment Consistency *@
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-semibold small text-dark">Repayment Consistency</span>
+                            <span class="fw-bold text-primary small"><span id="v_rc">@Model.RepaymentConsistencyWeight</span>%</span>
+                        </div>
+                        <input asp-for="RepaymentConsistencyWeight" type="range" class="form-range scoring-slider"
+                               min="0" max="100" id="sl_rc" oninput="updateSlider('sl_rc','v_rc')" />
+                        <span asp-validation-for="RepaymentConsistencyWeight" class="text-danger small"></span>
+                    </div>
+
+                    @* Credit Utilization *@
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-semibold small text-dark">Credit Utilization Rate</span>
+                            <span class="fw-bold text-primary small"><span id="v_cu">@Model.CreditUtilizationWeight</span>%</span>
+                        </div>
+                        <input asp-for="CreditUtilizationWeight" type="range" class="form-range scoring-slider"
+                               min="0" max="100" id="sl_cu" oninput="updateSlider('sl_cu','v_cu')" />
+                        <span asp-validation-for="CreditUtilizationWeight" class="text-danger small"></span>
+                    </div>
+
+                    @* Total allocation bar *@
+                    <div id="totalAlert" class="alert alert-success border-0 mt-4 p-3" style="border-radius: var(--radius-md);">
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-semibold">Total Weight Allocation</span>
+                            <span class="fw-bold" id="totalPct">100%</span>
+                        </div>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar" id="totalBar" style="width: 100%;"></div>
+                        </div>
+                        <div id="totalMsg" class="small mt-2 d-none text-danger fw-semibold">
+                            ⚠ Weights must sum to exactly 100% to save.
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1"><span class="fw-semibold small text-dark">Bureau Score (CIBIL)</span><span class="fw-bold text-primary small">35%</span></div>
-                    <div class="progress" style="height: 8px;"><div class="progress-bar bg-primary" style="width: 70%;"></div></div>
+        </div>
+
+        @* Right: Min Score Threshold + Live Preview *@
+        <div class="col-lg-5">
+            @* Minimum Credit Score Card *@
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold m-0">Minimum Approval Threshold</h5>
+                    <span class="text-muted small">Loans with credit score below this value will be auto-rejected.</span>
                 </div>
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1"><span class="fw-semibold small text-dark">Debt-to-Income Ratio</span><span class="fw-bold text-primary small">25%</span></div>
-                    <div class="progress" style="height: 8px;"><div class="progress-bar bg-primary" style="width: 50%;"></div></div>
+                <div class="card-body">
+                    <label asp-for="MinCreditScore" class="form-label fw-semibold text-muted small">
+                        Minimum Credit Score <span class="text-danger">*</span>
+                    </label>
+                    <div class="d-flex align-items-center gap-3">
+                        <input asp-for="MinCreditScore" type="range" class="form-range flex-grow-1"
+                               min="300" max="900" id="sl_minscore"
+                               oninput="document.getElementById('v_minscore').textContent=this.value" />
+                        <span class="badge bg-primary fs-5 px-3 py-2 fw-bold" id="v_minscore">@Model.MinCreditScore</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted small mt-1">
+                        <span>300 (Poor)</span>
+                        <span>600 (Fair)</span>
+                        <span>900 (Excellent)</span>
+                    </div>
+                    @{
+                        string minScoreClass = Model.MinCreditScore >= 750 ? "success" : Model.MinCreditScore >= 650 ? "warning" : "danger";
+                        string minScoreLabel = Model.MinCreditScore >= 750 ? "Excellent Tier" : Model.MinCreditScore >= 650 ? "Good Tier" : "Risky Threshold";
+                    }
+                    <div class="mt-3 text-center">
+                        <span class="badge bg-@minScoreClass px-3 py-2">Current: @Model.MinCreditScore — @minScoreLabel</span>
+                    </div>
+                    <span asp-validation-for="MinCreditScore" class="text-danger small d-block mt-1"></span>
                 </div>
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1"><span class="fw-semibold small text-dark">Credit History Age</span><span class="fw-bold text-primary small">15%</span></div>
-                    <div class="progress" style="height: 8px;"><div class="progress-bar bg-primary" style="width: 30%;"></div></div>
+            </div>
+
+            @* Live Impact Preview *@
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold m-0">Live Weight Distribution</h5>
+                    <span class="text-muted small">Visual breakdown of current weights.</span>
                 </div>
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1"><span class="fw-semibold small text-dark">Repayment Consistency</span><span class="fw-bold text-primary small">15%</span></div>
-                    <div class="progress" style="height: 8px;"><div class="progress-bar bg-primary" style="width: 30%;"></div></div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush" style="font-size: 0.85rem;">
+                        <li class="list-group-item px-0 py-2 d-flex justify-content-between">
+                            <span class="text-muted">Bureau Score (CIBIL)</span>
+                            <span class="fw-semibold text-primary"><span id="pv_bureau">@Model.BureauScoreWeight</span>%</span>
+                        </li>
+                        <li class="list-group-item px-0 py-2 d-flex justify-content-between">
+                            <span class="text-muted">Debt-to-Income Ratio</span>
+                            <span class="fw-semibold text-primary"><span id="pv_dti">@Model.DebtToIncomeWeight</span>%</span>
+                        </li>
+                        <li class="list-group-item px-0 py-2 d-flex justify-content-between">
+                            <span class="text-muted">Credit History Age</span>
+                            <span class="fw-semibold text-primary"><span id="pv_cha">@Model.CreditHistoryAgeWeight</span>%</span>
+                        </li>
+                        <li class="list-group-item px-0 py-2 d-flex justify-content-between">
+                            <span class="text-muted">Repayment Consistency</span>
+                            <span class="fw-semibold text-primary"><span id="pv_rc">@Model.RepaymentConsistencyWeight</span>%</span>
+                        </li>
+                        <li class="list-group-item px-0 py-2 d-flex justify-content-between">
+                            <span class="text-muted">Credit Utilization Rate</span>
+                            <span class="fw-semibold text-primary"><span id="pv_cu">@Model.CreditUtilizationWeight</span>%</span>
+                        </li>
+                    </ul>
+                    <div class="mt-3 text-muted small text-center" id="lastUpdated">
+                        Last updated: @Model.LastUpdated.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+                    </div>
                 </div>
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1"><span class="fw-semibold small text-dark">Credit Utilization Rate</span><span class="fw-bold text-primary small">10%</span></div>
-                    <div class="progress" style="height: 8px;"><div class="progress-bar bg-primary" style="width: 20%;"></div></div>
-                </div>
-                <div class="alert alert-success border-0 mt-4 p-3" style="border-radius: var(--radius-md);">
-                    <div class="d-flex justify-content-between"><span class="fw-semibold">Total Weight Allocation</span><span class="fw-bold">100%</span></div>
-                    <div class="progress mt-2" style="height: 6px;"><div class="progress-bar bg-success" style="width: 100%;"></div></div>
-                </div>
-                <a href="/Dashboard" class="btn btn-primary px-4 py-2 mt-3"><i class="fa-solid fa-floppy-disk me-2"></i> Save Configuration</a>
             </div>
         </div>
     </div>
-    <div class="col-lg-5">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-3">
-                <h5 class="fw-bold m-0">Live Impact Preview</h5>
-                <span class="text-muted small">Score for sample applicant (CIBIL 785, DTI 32%).</span>
-            </div>
-            <div class="card-body">
-                <div class="text-center py-3">
-                    <div class="display-6 fw-bold text-success">810</div>
-                    <div class="text-muted small mt-1">Computed Credit Score</div>
-                    <span class="badge bg-success mt-2 px-3 py-2">Excellent (Tier A)</span>
-                </div>
-                <hr />
-                <ul class="list-group list-group-flush" style="font-size: 0.8rem;">
-                    <li class="list-group-item px-0 py-2 d-flex justify-content-between"><span class="text-muted">Bureau Score (CIBIL)</span><span class="fw-semibold">+275 pts</span></li>
-                    <li class="list-group-item px-0 py-2 d-flex justify-content-between"><span class="text-muted">Debt-to-Income Ratio</span><span class="fw-semibold">+210 pts</span></li>
-                    <li class="list-group-item px-0 py-2 d-flex justify-content-between"><span class="text-muted">Credit History Age</span><span class="fw-semibold">+135 pts</span></li>
-                    <li class="list-group-item px-0 py-2 d-flex justify-content-between"><span class="text-muted">Repayment Consistency</span><span class="fw-semibold">+120 pts</span></li>
-                    <li class="list-group-item px-0 py-2 d-flex justify-content-between"><span class="text-muted">Credit Utilization Rate</span><span class="fw-semibold">+70 pts</span></li>
-                </ul>
-            </div>
-        </div>
+
+    <div class="mt-4">
+        <button type="submit" id="saveBtn" class="btn btn-primary px-4 py-2">
+            <i class="fa-solid fa-floppy-disk me-2"></i> Save Configuration
+        </button>
+        <a asp-action="Index" asp-controller="Dashboard" class="btn btn-light border px-4 py-2 ms-2">Cancel</a>
     </div>
-</div>
+</form>
+
+@section Scripts {
+<script>
+    const sliders = [
+        { sl: 'sl_bureau', v: 'v_bureau', pv: 'pv_bureau' },
+        { sl: 'sl_dti',    v: 'v_dti',    pv: 'pv_dti'    },
+        { sl: 'sl_cha',    v: 'v_cha',    pv: 'pv_cha'    },
+        { sl: 'sl_rc',     v: 'v_rc',     pv: 'pv_rc'     },
+        { sl: 'sl_cu',     v: 'v_cu',     pv: 'pv_cu'     }
+    ];
+
+    function updateSlider(slId, vId) {
+        const val = document.getElementById(slId).value;
+        document.getElementById(vId).textContent = val;
+        // Update preview panel
+        const entry = sliders.find(s => s.sl === slId);
+        if (entry && entry.pv) document.getElementById(entry.pv).textContent = val;
+        updateTotal();
+    }
+
+    function updateTotal() {
+        let total = 0;
+        sliders.forEach(s => { total += parseInt(document.getElementById(s.sl).value) || 0; });
+        const pct = document.getElementById('totalPct');
+        const bar = document.getElementById('totalBar');
+        const badge = document.getElementById('totalBadge');
+        const msg  = document.getElementById('totalMsg');
+        const alert = document.getElementById('totalAlert');
+        const btn  = document.getElementById('saveBtn');
+
+        pct.textContent = total + '%';
+        bar.style.width = Math.min(total, 100) + '%';
+
+        if (total === 100) {
+            alert.className = 'alert alert-success border-0 mt-4 p-3';
+            bar.className   = 'progress-bar bg-success';
+            badge.className = 'badge bg-success px-3 py-2';
+            badge.textContent = '100%';
+            msg.classList.add('d-none');
+            btn.disabled = false;
+        } else {
+            alert.className = 'alert alert-danger border-0 mt-4 p-3';
+            bar.className   = 'progress-bar bg-danger';
+            badge.className = 'badge bg-danger px-3 py-2';
+            badge.textContent = total + '%';
+            msg.classList.remove('d-none');
+            btn.disabled = true;
+        }
+    }
+
+    // Initialize on load
+    updateTotal();
+</script>
+}

@@ -9,52 +9,29 @@ namespace LOCPS.Controllers
     public class LoanController : Controller
     {
         private readonly ILoanApplicationService _loanApplicationService;
-        private readonly ILoanProductService _loanProductService;
+        private readonly IKycService _kycService;
+        private readonly IDocumentService _documentService;
+        private readonly ICreditEvaluationService _creditService;
 
-        public LoanController(ILoanApplicationService loanApplicationService, ILoanProductService loanProductService)
+        public LoanController(
+            ILoanApplicationService loanApplicationService,
+            IKycService kycService,
+            IDocumentService documentService,
+            ICreditEvaluationService creditService)
         {
             _loanApplicationService = loanApplicationService;
-            _loanProductService = loanProductService;
+            _kycService = kycService;
+            _documentService = documentService;
+            _creditService = creditService;
         }
 
         public async Task<IActionResult> Index(int page = 1, int pageSize = 10, ApplicationStatus? status = null)
         {
+            // Loan Officer sees: Submitted, KycPending, KycVerified
+            // But let's allow them to search all or specific statuses
             var query = new PagedQuery { Page = page, PageSize = pageSize };
             var result = await _loanApplicationService.SearchAsync(query, status);
             return View(result);
-        }
-
-        public async Task<IActionResult> Create()
-        {
-            var products = await _loanProductService.GetAllAsync(true);
-            ViewBag.Products = products;
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(LoanApplication application)
-        {
-            if (!ModelState.IsValid)
-            {
-                var products = await _loanProductService.GetAllAsync(true);
-                ViewBag.Products = products;
-                return View(application);
-            }
-
-            try
-            {
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                application.CreatedByUserId = int.TryParse(userId, out var id) ? id : 1;
-                await _loanApplicationService.CreateAsync(application);
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                var products = await _loanProductService.GetAllAsync(true);
-                ViewBag.Products = products;
-                return View(application);
-            }
         }
 
         public async Task<IActionResult> Details(int id)
@@ -63,42 +40,49 @@ namespace LOCPS.Controllers
             if (application == null)
                 return NotFound();
 
-            return View(application);
-        }
+            var kyc = await _kycService.GetByApplicationIdAsync(id);
+            var documents = await _documentService.GetByApplicationIdAsync(id);
+            var creditEval = await _creditService.GetByApplicationIdAsync(id);
 
-        public async Task<IActionResult> Edit(int id)
-        {
-            var application = await _loanApplicationService.GetByIdAsync(id);
-            if (application == null)
-                return NotFound();
+            ViewBag.Kyc = kyc;
+            ViewBag.Documents = documents;
+            ViewBag.CreditEvaluation = creditEval;
 
             return View(application);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(LoanApplication application)
+        public async Task<IActionResult> ForwardToUnderwriter(int id)
         {
-            if (!ModelState.IsValid)
-                return View(application);
-
             try
             {
-                await _loanApplicationService.UpdateAsync(application);
-                return RedirectToAction(nameof(Index));
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                var actorUserId = int.TryParse(userId, out var uid) ? uid : 0;
+
+                // Validate before forwarding
+                var kyc = await _kycService.GetByApplicationIdAsync(id);
+                if (kyc == null || kyc.VerificationStatus != KycStatus.Verified)
+                {
+                    TempData["Error"] = "Cannot forward: KYC is not verified.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
+                var creditEval = await _creditService.GetByApplicationIdAsync(id);
+                if (creditEval == null)
+                {
+                    TempData["Error"] = "Cannot forward: Credit score is not evaluated.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
+                await _loanApplicationService.UpdateStatusAsync(id, ApplicationStatus.UnderReview, actorUserId);
+                TempData["Success"] = "Application successfully forwarded to Underwriter.";
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return View(application);
+                TempData["Error"] = ex.Message;
             }
-        }
 
-        public async Task<IActionResult> UpdateStatus(int id, ApplicationStatus status)
-        {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            var actorUserId = int.TryParse(userId, out var idVal) ? idVal : 1;
-            await _loanApplicationService.UpdateStatusAsync(id, status, actorUserId);
-            return RedirectToAction(nameof(Details), new { id });
+            return RedirectToAction(nameof(Index));
         }
     }
 }
