@@ -198,10 +198,10 @@
 
             // Update info panel
             document.getElementById('infoRate').textContent   = p.interestRate + '% p.a.';
-            document.getElementById('infoMin').textContent    = '&#8377; ' + p.minAmount.toLocaleString('en-IN');
-            document.getElementById('infoMax').textContent    = '&#8377; ' + p.maxAmount.toLocaleString('en-IN');
+            document.getElementById('infoMin').textContent    = '₹' + p.minAmount.toLocaleString('en-IN');
+            document.getElementById('infoMax').textContent    = '₹' + p.maxAmount.toLocaleString('en-IN');
             document.getElementById('infoTenure').textContent = p.maxTenureMonths + ' months';
-            document.getElementById('infoFee').textContent    = '&#8377; ' + p.processingFee.toLocaleString('en-IN');
+            document.getElementById('infoFee').textContent    = '₹' + p.processingFee.toLocaleString('en-IN');
             infoPanel.classList.remove('d-none');
 
             // Update amount field constraints

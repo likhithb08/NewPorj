@@ -1,13 +1,37 @@
+@using System.Security.Claims
+@inject LOCPS.Data.AppDbContext _context
+
 @{
     var activeRole = Context.Request.Cookies["locps_demo_role"] ?? "officer";
     
-    var initials = "LO";
-    var fullName = "Likhith Kumar";
+    // 1. Map the role label instantly based on the cookie so it NEVER mismatches
     var roleLabel = "Loan Officer";
-    
-    if (activeRole == "customer") { initials = "RK"; fullName = "Rajesh Kumar"; roleLabel = "Portal Customer"; }
-    else if (activeRole == "underwriter") { initials = "UW"; fullName = "Anjali Sharma"; roleLabel = "Senior Underwriter"; }
-    else if (activeRole == "admin") { initials = "SA"; fullName = "System Administrator"; roleLabel = "Super Admin"; }
+    var initials = "LO";
+    var fullName = "Loan Officer";
+
+    if (activeRole == "customer") { roleLabel = "Portal Customer"; initials = "CR"; fullName = "Customer User"; }
+    else if (activeRole == "underwriter") { roleLabel = "Senior Underwriter"; initials = "UW"; fullName = "Underwriter User"; }
+    else if (activeRole == "admin") { roleLabel = "Super Admin"; initials = "SA"; fullName = "System Administrator"; }
+
+    // 2. Safely attempt to overwrite the generic placeholder name with the real DB name
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    // Parse the string userId to an int to prevent compiler error CS0019
+    if (!string.IsNullOrEmpty(userId) && int.TryParse(userId, out int parsedUserId))
+    {
+        var dbUser = _context.Users.FirstOrDefault(u => u.UserId == parsedUserId);
+        
+        if (dbUser != null && !string.IsNullOrWhiteSpace(dbUser.FullName))
+        {
+            fullName = dbUser.FullName;
+
+            // 3. Dynamically recalculate initials from their actual database name
+            var names = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            initials = names.Length > 1
+                ? $"{names[0][0]}{names[1][0]}".ToUpper()
+                : $"{names[0][0]}".ToUpper();
+        }
+    }
 }
 
 <header id="topbar">
@@ -22,6 +46,7 @@
     </div>
     
     <div class="d-flex align-items-center gap-3">
+        <!-- Notifications Dropdown -->
         <div class="dropdown">
             <button class="btn btn-link position-relative text-muted p-2 border-0 shadow-none" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa-regular fa-bell fs-5"></i>
@@ -110,6 +135,7 @@
 
         <div class="border-start h-100 py-3 mx-1"></div>
 
+        <!-- Dynamic Profile Dropdown -->
         <div class="dropdown">
             <button class="btn btn-link d-flex align-items-center gap-2 text-decoration-none text-dark p-1 border-0 shadow-none" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; font-weight: 700;">@initials</div>

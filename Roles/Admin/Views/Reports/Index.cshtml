@@ -104,7 +104,8 @@
                 <div class="card-header bg-white border-0 py-3">
                     <h6 class="fw-bold m-0">Product Performance Summary</h6>
                 </div>
-                <div class="card-body p-0">
+                <!-- Added px-3 padding here to prevent layout cutting -->
+                <div class="card-body p-0 px-3">
                     <div class="table-responsive">
                         <table class="table align-middle mb-0">
                             <thead>
@@ -113,7 +114,8 @@
                                     <th class="text-center">Total</th>
                                     <th class="text-center">Approved</th>
                                     <th class="text-center">Rejected</th>
-                                    <th class="text-end">Requested (₹)</th>
+                                    <!-- Added text-nowrap to prevent letter wrapping -->
+                                    <th class="text-end text-nowrap">Requested (₹)</th>
                                 </tr>
                             </thead>
                             <tbody>

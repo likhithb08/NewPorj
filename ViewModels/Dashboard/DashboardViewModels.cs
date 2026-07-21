@@ -35,3 +35,5 @@ public class CustomerDashboardViewModel
     public PagedResult<LoanApplication> Applications { get; set; } = new();
     public IEnumerable<Notification> Notifications { get; set; } = Enumerable.Empty<Notification>();
 }
+
+

@@ -40,14 +40,18 @@
                     <dd class="col-sm-8">@(Model.IsActive ? "Active" : "Inactive")</dd>
                 </dl>
                 
-                <form asp-action="DeleteConfirmed" method="post">
-                    <input type="hidden" asp-for="ProductId" />
+                <!-- Added explicit route parameter handling onto the target POST action -->
+                <form asp-action="Delete" asp-route-id="@Model.ProductId" method="post">
+                    <input type="hidden" name="id" value="@Model.ProductId" />
+                    
                     <div class="alert alert-warning">
                         <i class="fa-solid fa-exclamation-triangle me-2"></i>
                         This action will deactivate the product. It will not be permanently deleted.
                     </div>
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-danger px-4 py-2"><i class="fa-solid fa-trash me-2"></i> Delete Product</button>
+                        <button type="submit" class="btn btn-danger px-4 py-2">
+                            <i class="fa-solid fa-trash me-2"></i> Delete Product
+                        </button>
                         <a asp-action="Index" class="btn btn-light border px-4 py-2">Cancel</a>
                     </div>
                 </form>
