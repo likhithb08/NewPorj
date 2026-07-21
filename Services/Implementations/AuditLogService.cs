@@ -34,4 +34,7 @@ public class AuditLogService : IAuditLogService
 
     public async Task<PagedResult<Auditlog>> GetPagedAsync(PagedQuery query) =>
         await _repository.GetPagedAsync(query);
+
+    public async Task<IEnumerable<Auditlog>> GetAuditLogsForApplicationAsync(int applicationId) =>
+        await _repository.GetAuditLogsForApplicationAsync(applicationId);
 }

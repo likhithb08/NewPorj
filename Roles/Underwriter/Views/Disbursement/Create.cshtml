@@ -1,73 +1,167 @@
+@model LOCPS.Models.LoanApplication
+@using LOCPS.Models
+@using LOCPS.Enums
+
 @{
     ViewData["Title"] = "Initiate Disbursement";
     ViewData["CurrentStep"] = "Disbursement";
+    
+    var approval = ViewBag.Approval as Approval;
+    
+    var approvedAmount = approval?.ApprovedAmount ?? Model.RequestedAmount;
+    var annualRate = approval?.ApprovedInterestRate ?? Model.Product?.InterestRate ?? 8.5m;
+    var tenureMonths = approval?.ApprovedTenureMonths ?? Model.Product?.MaxTenureMonths ?? 180;
+    
+    var monthlyRate = annualRate / 12 / 100;
+    decimal emiAmount = 0;
+    if (monthlyRate > 0)
+    {
+        emiAmount = approvedAmount * monthlyRate * (decimal)Math.Pow(1 + (double)monthlyRate, tenureMonths) /
+                    ((decimal)Math.Pow(1 + (double)monthlyRate, tenureMonths) - 1);
+    }
+    else
+    {
+        emiAmount = approvedAmount / tenureMonths;
+    }
+    
+    var processingFee = Model.Product?.ProcessingFee ?? 0;
+    var netTransfer = approvedAmount - processingFee;
 }
 
 <div class="row mb-4">
     <div class="col-12">
         <h1 class="h3 fw-bold text-dark mb-1">Initiate Loan Disbursement</h1>
-        <p class="text-muted">Configure payment transfer details for sanctioned application <strong>LOC-9844-32</strong>.</p>
+        <p class="text-muted">Configure payment transfer details for sanctioned application <strong>@Model.ApplicationNumber</strong>.</p>
     </div>
 </div>
 
 @await Html.PartialAsync("_WorkflowStepper")
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-3"><h5 class="card-title fw-bold m-0">Payment Transfer Details</h5></div>
-            <div class="card-body">
-                <ul class="nav nav-pills gap-2 mb-4" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active px-4" data-bs-toggle="pill" data-bs-target="#neft-pane" type="button"><i class="fa-solid fa-building-columns me-2"></i>NEFT</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4" data-bs-toggle="pill" data-bs-target="#imps-pane" type="button"><i class="fa-solid fa-bolt me-2"></i>IMPS</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4" data-bs-toggle="pill" data-bs-target="#cheque-pane" type="button"><i class="fa-solid fa-money-check me-2"></i>Cheque</button>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="neft-pane">
-                        <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label fw-semibold text-muted small">Account Holder Name</label><input type="text" class="form-control py-2 shadow-none" value="Rajesh Kumar" readonly /></div>
-                            <div class="col-md-6"><label class="form-label fw-semibold text-muted small">Account Number</label><input type="text" class="form-control py-2 shadow-none" value="HDFC0000198841221" readonly /></div>
-                            <div class="col-md-6"><label class="form-label fw-semibold text-muted small">IFSC Code</label><input type="text" class="form-control py-2 shadow-none" value="HDFC0002198" readonly /></div>
-                            <div class="col-md-6"><label class="form-label fw-semibold text-muted small">Bank Name</label><input type="text" class="form-control py-2 shadow-none" value="HDFC Bank - JP Nagar Branch" readonly /></div>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Error"]
+    </div>
+}
+
+<form asp-controller="Disbursement" asp-action="Create" asp-route-id="@Model.ApplicationId" method="post">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3"><h5 class="card-title fw-bold m-0">Payment Transfer Details</h5></div>
+                <div class="card-body">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Account Holder Name</label>
+                            <input type="text" class="form-control py-2 shadow-none" value="@Model.Customer.FullName" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Transfer Mode</label>
+                            <select name="disbursementMode" class="form-select py-2 shadow-none" required>
+                                <option value="NEFT">NEFT (National Electronic Funds Transfer)</option>
+                                <option value="IMPS">IMPS (Immediate Payment Service)</option>
+                                <option value="Cheque">Bank Demand Draft / Cheque</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Recipient Bank Account Number</label>
+                            <input type="number" name="bankAccountNumber" class="form-control py-2 shadow-none" placeholder="Enter bank account number (required)..." required min="100000000" max="999999999999999999" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Recipient Bank Name</label>
+                            <input type="text" name="bankName" class="form-control py-2 shadow-none" placeholder="Enter bank name & branch (required)..." required />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold text-muted small">Disbursement Notes</label>
+                            <textarea name="notes" class="form-control shadow-none" rows="3" placeholder="Enter any transfer notes or references (optional)..."></textarea>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="imps-pane">
-                        <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label fw-semibold text-muted small">Registered Mobile Number</label><input type="tel" class="form-control py-2 shadow-none" value="+91 98765 43210" readonly /></div>
-                            <div class="col-md-6"><label class="form-label fw-semibold text-muted small">MMID Code</label><input type="text" class="form-control py-2 shadow-none" value="9014112" readonly /></div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="cheque-pane">
-                        <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label fw-semibold text-muted small">Payee Name</label><input type="text" class="form-control py-2 shadow-none" value="Rajesh Kumar" readonly /></div>
-                            <div class="col-md-6"><label class="form-label fw-semibold text-muted small">Mailing Address</label><input type="text" class="form-control py-2 shadow-none" value="#45, 2nd Main, JP Nagar, Bangalore - 560078" readonly /></div>
-                        </div>
+
+                    <div class="pt-3 border-top d-flex gap-2">
+                        <button type="submit" class="btn btn-success px-4 py-2"><i class="fa-solid fa-paper-plane me-2"></i> Confirm & Disburse</button>
+                        <a href="/Dashboard" class="btn btn-light border px-4 py-2">Cancel</a>
                     </div>
                 </div>
-                <div class="mt-4 pt-3 border-top d-flex gap-2">
-                    <a href="/Disbursement/History" class="btn btn-success px-4 py-2"><i class="fa-solid fa-paper-plane me-2"></i> Confirm & Disburse</a>
-                    <a href="/Dashboard" class="btn btn-light border px-4 py-2">Cancel</a>
+            </div>
+
+            <!-- EMI Schedule Preview -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold m-0"><i class="fa-solid fa-calendar-days text-primary me-2"></i>EMI Amortization Preview</h5>
+                    <span class="text-muted small">Showing first 6 installments</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0" style="font-size: 0.875rem;">
+                            <thead>
+                                <tr>
+                                    <th>Emi No.</th>
+                                    <th>Due Date</th>
+                                    <th>Principal + Interest</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 1; i <= Math.Min(tenureMonths, 6); i++)
+                                {
+                                    <tr>
+                                        <td><span class="fw-bold">Installment #@i</span></td>
+                                        <td class="text-muted small">@DateTime.UtcNow.AddMonths(i).ToString("dd MMM yyyy")</td>
+                                        <td class="fw-semibold">₹ @emiAmount.ToString("N2")</td>
+                                        <td><span class="badge-status badge-status-pending">Awaiting Disbursement</span></td>
+                                    </tr>
+                                }
+                                @if (tenureMonths > 6)
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-3 italic">
+                                            ... and @(tenureMonths - 6) more installments ending on @DateTime.UtcNow.AddMonths(tenureMonths).ToString("MMMM dd, yyyy")
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3"><h6 class="fw-bold m-0">Disbursement Summary</h6></div>
+                <div class="card-body pt-0" style="font-size: 0.875rem;">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                            <span class="text-muted">Sanctioned Amount</span>
+                            <span class="fw-bold text-success">₹ @approvedAmount.ToString("N0")</span>
+                        </li>
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                            <span class="text-muted">Interest Rate</span>
+                            <span class="fw-semibold">@annualRate% p.a.</span>
+                        </li>
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                            <span class="text-muted">Tenure Months</span>
+                            <span class="fw-semibold">@tenureMonths Months</span>
+                        </li>
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                            <span class="text-muted">Monthly EMI</span>
+                            <span class="fw-bold text-primary">₹ @emiAmount.ToString("N2")</span>
+                        </li>
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between text-danger">
+                            <span class="text-muted">Processing Fee</span>
+                            <span class="fw-semibold">- ₹ @processingFee.ToString("N0")</span>
+                        </li>
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between border-top">
+                            <span class="fw-bold text-dark">Net Transfer Amount</span>
+                            <span class="fw-bold text-primary fs-5">₹ @netTransfer.ToString("N2")</span>
+                        </li>
+                        <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                            <span class="text-muted">First EMI Due</span>
+                            <span class="fw-semibold">@DateTime.UtcNow.AddMonths(1).ToString("MMMM dd, yyyy")</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-4 mt-4 mt-lg-0">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-3"><h6 class="fw-bold m-0">Disbursement Summary</h6></div>
-            <div class="card-body pt-0" style="font-size: 0.875rem;">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Sanctioned Amount</span><span class="fw-bold text-success">₹ 45,00,000</span></li>
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">Processing Fee (0.25%)</span><span class="fw-semibold text-danger">- ₹ 11,250</span></li>
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between border-top"><span class="fw-bold text-dark">Net Transfer Amount</span><span class="fw-bold text-primary">₹ 44,88,750</span></li>
-                    <li class="list-group-item px-0 py-3 d-flex justify-content-between"><span class="text-muted">First EMI Due</span><span class="fw-semibold">August 1, 2026</span></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
+</form>

@@ -47,6 +47,30 @@ public class AuditLogRepository : GenericRepository<Auditlog>, IAuditLogReposito
 
     public async Task<IEnumerable<Auditlog>> GetByUserIdAsync(int userId) =>
         await _context.Auditlogs.Where(a => a.UserId == userId).OrderByDescending(a => a.Timestamp).ToListAsync();
+
+    public async Task<IEnumerable<Auditlog>> GetAuditLogsForApplicationAsync(int applicationId)
+    {
+        var kycId = await _context.Kyc.Where(k => k.ApplicationId == applicationId).Select(k => k.KycId).FirstOrDefaultAsync();
+        var creditId = await _context.CreditEvaluation.Where(c => c.ApplicationId == applicationId).Select(c => c.CreditId).FirstOrDefaultAsync();
+        var docIds = await _context.Document.Where(d => d.ApplicationId == applicationId).Select(d => d.DocumentId).ToListAsync();
+        var approvalId = await _context.Approval.Where(a => a.ApplicationId == applicationId).Select(a => a.ApprovalId).FirstOrDefaultAsync();
+        var disbursementId = await _context.Disbursments.Where(d => d.ApplicationId == applicationId).Select(d => d.DisbursmentId).FirstOrDefaultAsync();
+        var emiIds = await _context.Emis.Where(e => e.ApplicationID == applicationId).Select(e => e.EmiId).ToListAsync();
+
+        var entityIds = new List<string> { $"Application:{applicationId}", $"EMISchedule:{applicationId}" };
+        if (kycId > 0) entityIds.Add($"KYC:{kycId}");
+        if (creditId > 0) entityIds.Add($"CreditEval:{creditId}");
+        if (approvalId > 0) entityIds.Add($"Approval:{approvalId}");
+        if (disbursementId > 0) entityIds.Add($"Disbursement:{disbursementId}");
+        foreach (var docId in docIds) entityIds.Add($"Document:{docId}");
+        foreach (var emiId in emiIds) entityIds.Add($"EMI:{emiId}");
+
+        return await _context.Auditlogs
+            .Include(a => a.User)
+            .Where(a => entityIds.Contains(a.EntityId))
+            .OrderByDescending(a => a.Timestamp)
+            .ToListAsync();
+    }
 }
 
 public class DocumentRepository : GenericRepository<Document>, IDocumentRepository

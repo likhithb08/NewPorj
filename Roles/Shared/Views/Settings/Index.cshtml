@@ -1,11 +1,10 @@
+@model LOCPS.Models.User
 @{
     ViewData["Title"] = "Account Settings";
-    var activeRole = Context.Request.Cookies["locps_demo_role"] ?? "officer";
-    var initials = "LO"; var fullName = "Likhith Kumar"; var roleLabel = "Loan Officer";
-    var email = "likhith.k@locps.in"; var phone = "+91 98765 01234"; var branch = "Bangalore HQ";
-    if (activeRole == "customer") { initials = "RK"; fullName = "Rajesh Kumar"; roleLabel = "Portal Customer"; email = "customer@locps.in"; phone = "+91 98765 43210"; branch = "Bangalore Retail"; }
-    else if (activeRole == "underwriter") { initials = "UW"; fullName = "Anjali Sharma"; roleLabel = "Senior Underwriter"; email = "anjali.s@locps.in"; phone = "+91 98765 99881"; }
-    else if (activeRole == "admin") { initials = "SA"; fullName = "System Administrator"; roleLabel = "Super Admin"; email = "admin@locps.in"; phone = "+91 98765 55667"; branch = "Main Center"; }
+    var initials = string.Concat((Model?.FullName ?? "U").Split(' ').Select(w => w.Length > 0 ? w[0].ToString() : "")).ToUpper();
+    initials = initials.Length > 2 ? initials[..2] : initials;
+    var roleLabel = Model?.Role?.Roles.ToString() ?? "User";
+    var memberSince = Model?.CreatedDate.ToString("MMM yyyy") ?? "—";
 }
 
 <div class="row mb-4">
@@ -15,50 +14,163 @@
     </div>
 </div>
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4">
+        <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Error"]
+    </div>
+}
+@if (TempData["PwdSuccess"] != null)
+{
+    <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4">
+        <i class="fa-solid fa-circle-check me-2"></i> @TempData["PwdSuccess"]
+    </div>
+}
+@if (TempData["PwdError"] != null)
+{
+    <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["PwdError"]
+    </div>
+}
+
 <div class="row g-4">
+    {{!-- ── Left Avatar Card (unchanged layout) ── --}}
     <div class="col-lg-4">
         <div class="card border-0 shadow-sm text-center py-4">
             <div class="card-body">
-                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; font-weight: 700; font-size: 2rem;">@initials</div>
-                <h5 class="fw-bold text-dark mb-1">@fullName</h5>
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                     style="width: 80px; height: 80px; font-weight: 700; font-size: 2rem;">@initials</div>
+                <h5 class="fw-bold text-dark mb-1">@Model?.FullName</h5>
                 <p class="badge bg-light text-secondary border px-3 py-2 fw-semibold mb-3">@roleLabel</p>
                 <div class="border-top pt-3 text-start small mt-3">
-                    <div class="d-flex justify-content-between mb-2"><span class="text-muted">Account Status:</span><span class="text-success fw-bold">Active</span></div>
-                    <div class="d-flex justify-content-between mb-2"><span class="text-muted">Location:</span><span class="fw-semibold text-dark">@branch</span></div>
-                    <div class="d-flex justify-content-between"><span class="text-muted">Member Since:</span><span class="fw-semibold text-dark">Jan 2024</span></div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Account Status:</span>
+                        <span class="@(Model?.IsActive == true ? "text-success" : "text-danger") fw-bold">
+                            @(Model?.IsActive == true ? "Active" : "Inactive")
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Location:</span>
+                        <span class="fw-semibold text-dark">Main Center</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Member Since:</span>
+                        <span class="fw-semibold text-dark">@memberSince</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-lg-8">
+
+        {{!-- ── Personal Profile Information (same layout, now a real form) ── --}}
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3 border-bottom">
                 <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-user text-primary me-2"></i> Personal Profile Information</h6>
             </div>
             <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label fw-semibold text-muted small">Full Name</label><p class="form-control-plaintext fw-semibold">@fullName</p></div>
-                    <div class="col-md-6"><label class="form-label fw-semibold text-muted small">Email Address</label><p class="form-control-plaintext">@email</p></div>
-                    <div class="col-md-6"><label class="form-label fw-semibold text-muted small">Phone Number</label><p class="form-control-plaintext">@phone</p></div>
-                    <div class="col-md-6"><label class="form-label fw-semibold text-muted small">Branch Office</label><p class="form-control-plaintext">@branch</p></div>
-                </div>
-                <div class="mt-4 pt-2">
-                    <a href="/Dashboard" class="btn btn-primary px-4" style="border-radius: var(--radius-md);">Save Profile Changes</a>
-                </div>
+                <form asp-action="SaveProfile" asp-controller="Settings" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Full Name</label>
+                            <input type="text" name="fullName" class="form-control-plaintext fw-semibold border-bottom pb-1"
+                                   value="@Model?.FullName" required maxlength="50" style="outline:none;" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Email Address</label>
+                            <p class="form-control-plaintext">@Model?.Email</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Phone Number</label>
+                            <input type="tel" name="phoneNumber" class="form-control-plaintext border-bottom pb-1"
+                                   value="@Model?.PhoneNumber" maxlength="15" style="outline:none;" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small">Branch Office</label>
+                            <p class="form-control-plaintext">Main Center</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-2">
+                        <button type="submit" class="btn btn-primary px-4" style="border-radius: var(--radius-md);">Save Profile Changes</button>
+                    </div>
+                </form>
             </div>
         </div>
 
+        {{!-- ── Security & Password Management (same layout + real form in collapse) ── --}}
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3 border-bottom">
-                <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-lock text-primary me-2"></i> Security & Password Management</h6>
+                <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-lock text-primary me-2"></i> Security &amp; Password Management</h6>
             </div>
             <div class="card-body">
-                <p class="text-muted small mb-3">Password changes are managed by your system administrator. Contact IT support for credential resets.</p>
-                <a href="/Dashboard" class="btn btn-dark px-4" style="border-radius: var(--radius-md);">Request Password Change</a>
+                <p class="text-muted small mb-3">Update your login password. You must provide your current password to set a new one.</p>
+
+                <button class="btn btn-dark px-4 mb-3" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#pwdForm" aria-expanded="false" style="border-radius: var(--radius-md);">
+                    Request Password Change
+                </button>
+
+                <div class="collapse" id="pwdForm">
+                    <form asp-action="ChangePassword" asp-controller="Settings" method="post" class="border-top pt-3 mt-1">
+                        @Html.AntiForgeryToken()
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold text-muted small">Current Password</label>
+                                <input type="password" name="currentPassword" class="form-control py-2 shadow-none"
+                                       placeholder="Enter your current password" required autocomplete="current-password" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">New Password</label>
+                                <input type="password" name="newPassword" id="newPwd" class="form-control py-2 shadow-none"
+                                       placeholder="Min. 8 characters" required minlength="8" autocomplete="new-password" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Confirm New Password</label>
+                                <input type="password" name="confirmPassword" id="confirmPwd" class="form-control py-2 shadow-none"
+                                       placeholder="Re-enter new password" required minlength="8"
+                                       autocomplete="new-password" oninput="checkPwdMatch()" />
+                                <div id="pwdMatchMsg" class="form-text" style="display:none;"></div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-dark px-4" style="border-radius: var(--radius-md);">
+                                <i class="fa-solid fa-key me-1"></i> Update Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <script>
+                    function checkPwdMatch() {
+                        var np = document.getElementById('newPwd').value;
+                        var cp = document.getElementById('confirmPwd').value;
+                        var msg = document.getElementById('pwdMatchMsg');
+                        if (!cp) { msg.style.display = 'none'; return; }
+                        msg.style.display = '';
+                        msg.textContent = np === cp ? '✓ Passwords match' : '✗ Passwords do not match';
+                        msg.className = 'form-text ' + (np === cp ? 'text-success' : 'text-danger');
+                    }
+                    // Auto-expand collapse if there was a password error/success
+                    @if (TempData["PwdError"] != null || TempData["PwdSuccess"] != null)
+                    {
+                        <text>document.addEventListener('DOMContentLoaded', function() {
+                            var el = document.getElementById('pwdForm');
+                            if (el) new bootstrap.Collapse(el, {toggle:true});
+                        });</text>
+                    }
+                </script>
             </div>
         </div>
 
+        {{!-- ── Notification Configurations (same as original) ── --}}
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0 py-3 border-bottom">
                 <h6 class="fw-bold text-dark m-0"><i class="fa-solid fa-bell text-primary me-2"></i> Notification Configurations</h6>
@@ -78,5 +190,6 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>

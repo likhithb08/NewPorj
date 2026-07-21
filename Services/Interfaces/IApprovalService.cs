@@ -8,4 +8,5 @@ public interface IApprovalService
     Task<Approval> RejectLoanAsync(int applicationId, int approverUserId, string reason, string? comments);
     Task<Approval?> GetByApplicationIdAsync(int applicationId);
     Task<IEnumerable<Approval>> GetHistoryAsync();
+    Task<Approval> SendBackToLoanOfficerAsync(int applicationId, int approverUserId, string remarks);
 }
