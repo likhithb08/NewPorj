@@ -19,7 +19,11 @@
             <div class="card-body">
                 <form asp-action="Edit" method="post">
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                    
+                    <!-- Hidden fields to preserve keys and database relations -->
                     <input type="hidden" asp-for="ProductId" />
+                    <input type="hidden" asp-for="CreatedByUserId" />
+
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label asp-for="ProductName" class="form-label fw-semibold text-muted small">Product Name <span class="text-danger">*</span></label>
@@ -71,8 +75,11 @@
                             <span asp-validation-for="IsActive" class="text-danger small"></span>
                         </div>
                     </div>
+                    
                     <div class="mt-4 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary px-4 py-2"><i class="fa-solid fa-floppy-disk me-2"></i> Update Product</button>
+                        <button type="submit" class="btn btn-primary px-4 py-2">
+                            <i class="fa-solid fa-floppy-disk me-2"></i> Update Product
+                        </button>
                         <a asp-action="Index" class="btn btn-light border px-4 py-2">Cancel</a>
                     </div>
                 </form>

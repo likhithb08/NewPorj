@@ -96,7 +96,7 @@ public class UserService : IUserService
     {
         var user = await _userRepository.GetByIdAsync(userId)
             ?? throw new ServiceException("User not found.", 404);
-        await _userRepository.DeleteUserByIdAsync(user.UserId);
+        await _userRepository.DeleteUserByIdAsync(userId);
         await _auditLogService.LogAsync(userId, Actions.Updated, $"User:{userId}", user.Email, "Deleted", null, null);
         return true;
     }

@@ -24,6 +24,8 @@ namespace LOCPS.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(LoanProduct product)
         {
+            ModelState.Remove("User");
+
             if (!ModelState.IsValid)
                 return View(product);
 
@@ -62,6 +64,8 @@ namespace LOCPS.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(LoanProduct product)
         {
+            ModelState.Remove("User");
+
             if (!ModelState.IsValid)
                 return View(product);
 
@@ -70,27 +74,41 @@ namespace LOCPS.Controllers
                 await _loanProductService.UpdateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Failed to update loan product.");
+                ModelState.AddModelError(string.Empty, $"Failed to update: {ex.InnerException?.Message ?? ex.Message}");
                 return View(product);
             }
         }
 
+        // GET: /Product/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _loanProductService.GetByIdAsync(id);
             if (product == null)
+            {
                 return NotFound();
-
+            }
             return View(product);
         }
 
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        // POST: /Product/Delete
+        // Changed name from DeleteConfirmed to Delete so it maps perfectly to standard form routing
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id, string dummyParameter = "")
         {
-            await _loanProductService.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
+            // Fallback checking to extract the parameter if route data binding fails
+            if (id == 0)
+            {
+                int.TryParse(Request.Form["id"], out id);
+            }
+
+            if (id > 0)
+            {
+                await _loanProductService.DeleteAsync(id);
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

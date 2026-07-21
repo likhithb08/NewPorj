@@ -48,7 +48,7 @@ public class LoanProductService : ILoanProductService
         var product = await _repository.GetLoanProductByIdAsync(id)
             ?? throw new ServiceException("Product not found.", 404);
         product.IsActive = false;
-        await _repository.UpdateLoanProductAsync(product);
+        await _repository.DeleteLoanProductAsync(product);
         return true;
     }
 }
