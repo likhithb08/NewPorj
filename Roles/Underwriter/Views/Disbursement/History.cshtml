@@ -1,3 +1,5 @@
+@model IEnumerable<LOCPS.Models.Disbursment>
+
 @{
     ViewData["Title"] = "Disbursement History";
     ViewData["CurrentStep"] = "Disbursement";
@@ -12,14 +14,20 @@
 
 @await Html.PartialAsync("_WorkflowStepper")
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4">
+        <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+    </div>
+}
+
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
         <h5 class="card-title fw-bold m-0">Transaction History</h5>
-        <a href="/Disbursement/History" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-download me-2"></i> Export CSV</a>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive border-0">
-            <table class="table align-middle">
+            <table class="table align-middle mb-0">
                 <thead>
                     <tr>
                         <th>Transaction Ref</th>
@@ -32,51 +40,43 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><span class="fw-bold text-dark">DBR-20260624-9844</span></td>
-                        <td>LOC-9844-32</td>
-                        <td>Rajesh Kumar</td>
-                        <td class="fw-semibold">₹ 44,88,750</td>
-                        <td><span class="badge bg-light text-secondary border">NEFT</span></td>
-                        <td>2026-06-24</td>
-                        <td><span class="badge-status badge-status-processing">Processing</span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="fw-bold text-dark">DBR-20260620-7788</span></td>
-                        <td>LOC-7788-12</td>
-                        <td>Sunitha Rao</td>
-                        <td class="fw-semibold">₹ 4,97,500</td>
-                        <td><span class="badge bg-light text-secondary border">IMPS</span></td>
-                        <td>2026-06-20</td>
-                        <td><span class="badge-status badge-status-approved">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="fw-bold text-dark">DBR-20260615-1155</span></td>
-                        <td>LOC-1155-77</td>
-                        <td>Vikram Singh</td>
-                        <td class="fw-semibold">₹ 59,78,000</td>
-                        <td><span class="badge bg-light text-secondary border">NEFT</span></td>
-                        <td>2026-06-15</td>
-                        <td><span class="badge-status badge-status-approved">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="fw-bold text-dark">DBR-20260612-4455</span></td>
-                        <td>LOC-4455-88</td>
-                        <td>Deepa Balakrishnan</td>
-                        <td class="fw-semibold">₹ 3,49,125</td>
-                        <td><span class="badge bg-light text-secondary border">NEFT</span></td>
-                        <td>2026-06-12</td>
-                        <td><span class="badge-status badge-status-approved">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="fw-bold text-dark">DBR-20260610-9900</span></td>
-                        <td>LOC-9900-11</td>
-                        <td>Suresh Prabhu</td>
-                        <td class="fw-semibold">₹ 21,94,500</td>
-                        <td><span class="badge bg-light text-secondary border">IMPS</span></td>
-                        <td>2026-06-10</td>
-                        <td><span class="badge-status badge-status-approved">Completed</span></td>
-                    </tr>
+                    @if (Model.Any())
+                    {
+                        @foreach (var dbr in Model)
+                        {
+                            <tr>
+                                <td><span class="fw-bold text-dark">@dbr.TransactionId</span></td>
+                                <td><span class="fw-semibold text-primary">@(dbr.LoanApplication?.ApplicationNumber ?? $"LOC-{dbr.ApplicationId}")</span></td>
+                                <td>@(dbr.LoanApplication?.Customer?.FullName ?? "Rajesh Kumar")</td>
+                                <td class="fw-semibold">₹ @dbr.AmountApproved.ToString("N2")</td>
+                                <td><span class="badge bg-light text-secondary border">@dbr.DisbursmentMode</span></td>
+                                <td class="text-muted small">@(dbr.DisbursmentDate?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                <td>
+                                    @if (dbr.Status == DisbursmentStatus.Completed)
+                                    {
+                                        <span class="badge-status badge-status-approved">Completed</span>
+                                    }
+                                    else if (dbr.Status == DisbursmentStatus.Failed)
+                                    {
+                                        <span class="badge-status badge-status-rejected">Failed</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-status badge-status-processing">Pending</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <i class="fa-solid fa-file-invoice-dollar text-muted fs-2 mb-3 d-block"></i>
+                                <p class="text-muted mb-0">No disbursements recorded in history.</p>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

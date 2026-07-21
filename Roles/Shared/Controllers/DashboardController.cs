@@ -66,6 +66,7 @@ namespace LOCPS.Controllers
             var submitted = (await _loanApplicationService.SearchAsync(new PagedQuery { Page = 1, PageSize = 1 }, ApplicationStatus.Submitted)).TotalCount;
             var underReview = (await _loanApplicationService.SearchAsync(new PagedQuery { Page = 1, PageSize = 1 }, ApplicationStatus.UnderReview)).TotalCount;
             var creditEvaluated = (await _loanApplicationService.SearchAsync(new PagedQuery { Page = 1, PageSize = 1 }, ApplicationStatus.CreditEvaluated)).TotalCount;
+            var approved = (await _loanApplicationService.SearchAsync(new PagedQuery { Page = 1, PageSize = 1 }, ApplicationStatus.Approved)).TotalCount;
             var products = await _loanProductService.GetAllAsync(true);
 
             var (title, description) = role switch
@@ -83,6 +84,7 @@ namespace LOCPS.Controllers
                 TotalApplications = allApps.TotalCount,
                 PendingKyc = kycPending + submitted,
                 PendingApprovals = underReview + creditEvaluated,
+                PendingDisbursements = approved,
                 ActiveProducts = products.Count(),
                 RecentApplications = allApps.Items.Select(a => new DashboardApplicationRowViewModel
                 {

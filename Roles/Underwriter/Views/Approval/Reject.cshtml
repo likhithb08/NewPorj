@@ -1,3 +1,5 @@
+@model LOCPS.Models.Approval
+
 @{
     ViewData["Title"] = "Loan Rejected";
     ViewData["CurrentStep"] = "Approve/Reject";
@@ -9,7 +11,7 @@
             <i class="fa-solid fa-xmark"></i>
         </div>
         <h1 class="h2 fw-bold text-dark mb-2">Loan Application Rejected</h1>
-        <p class="text-muted">Application <strong>LOC-9844-32</strong> has been declined. The applicant will be notified with reasons.</p>
+        <p class="text-muted">Application <strong>@(Model.Application?.ApplicationNumber ?? $"LOC-{Model.ApplicationId}")</strong> has been declined. The applicant will be notified with reasons.</p>
         <div class="d-flex gap-2 justify-content-center mt-4">
             <a href="/Dashboard" class="btn btn-primary px-4 py-2">
                 Back to Dashboard
@@ -27,26 +29,40 @@
     <div class="card-body pt-0">
         <ul class="list-group list-group-flush" style="font-size: 0.875rem;">
             <li class="list-group-item px-0 py-3 d-flex justify-content-between">
-                <span class="text-muted">Application ID</span><span class="fw-bold">LOC-9844-32</span>
+                <span class="text-muted">Application ID</span>
+                <span class="fw-bold">@(Model.Application?.ApplicationNumber ?? $"LOC-{Model.ApplicationId}")</span>
             </li>
             <li class="list-group-item px-0 py-3 d-flex justify-content-between">
-                <span class="text-muted">Applicant</span><span class="fw-semibold">Rajesh Kumar</span>
+                <span class="text-muted">Applicant</span>
+                <span class="fw-semibold">@(Model.Application?.Customer?.FullName ?? "Rajesh Kumar")</span>
             </li>
             <li class="list-group-item px-0 py-3 d-flex justify-content-between">
-                <span class="text-muted">Rejection Reason</span><span class="fw-semibold text-danger">High Credit Utilization</span>
+                <span class="text-muted">Rejection Reason</span>
+                <span class="fw-bold text-danger">@(Model.RejectionReason ?? "Credit Policy Violation")</span>
             </li>
             <li class="list-group-item px-0 py-3 d-flex justify-content-between">
-                <span class="text-muted">Rejected By</span><span class="fw-semibold">Anjali Sharma (Underwriter)</span>
+                <span class="text-muted">Rejected By</span>
+                <span class="fw-semibold">@(Model.Approver?.FullName ?? "Underwriter")</span>
             </li>
             <li class="list-group-item px-0 py-3 d-flex justify-content-between">
-                <span class="text-muted">Loan Product</span><span class="fw-semibold">Home Purchase Loan</span>
+                <span class="text-muted">Loan Product</span>
+                <span class="fw-semibold">@(Model.Application?.Product?.ProductName ?? "Home Purchase Loan")</span>
             </li>
             <li class="list-group-item px-0 py-3 d-flex justify-content-between">
-                <span class="text-muted">Requested Amount</span><span class="fw-bold text-danger">₹ 45,00,000</span>
+                <span class="text-muted">Requested Amount</span>
+                <span class="fw-bold text-danger">₹ @(Model.Application?.RequestedAmount.ToString("N0") ?? "—")</span>
             </li>
             <li class="list-group-item px-0 py-3 d-flex justify-content-between">
-                <span class="text-muted">Rejection Date</span><span class="fw-semibold">June 24, 2026</span>
+                <span class="text-muted">Rejection Date</span>
+                <span class="fw-semibold">@Model.ApprovalDate.ToString("MMMM dd, yyyy")</span>
             </li>
+            @if (!string.IsNullOrEmpty(Model.Comments))
+            {
+                <li class="list-group-item px-0 py-3">
+                    <span class="text-muted small">Underwriter remarks:</span>
+                    <p class="mb-0 text-muted small italic mt-1 bg-light p-2 rounded">@Model.Comments</p>
+                </li>
+            }
         </ul>
     </div>
 </div>

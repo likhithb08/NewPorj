@@ -67,11 +67,11 @@
         {
             <div class="nav-section">
                 <div class="nav-heading">Credit Decisioning</div>
-                <a href="/Approval/Review/9844" class="nav-link-item @(currentPath.StartsWith("/approval") ? "active" : "")">
+                <a href="/Approval" class="nav-link-item @(currentPath.StartsWith("/approval") ? "active" : "")">
                     <i class="fa-solid fa-signature"></i>
                     Underwriter Review
                 </a>
-                <a href="/Disbursement/Create/9844" class="nav-link-item @(currentPath.Contains("/disbursement/create") ? "active" : "")">
+                <a href="/Disbursement" class="nav-link-item @(currentPath.Contains("/disbursement") && !currentPath.Contains("/history") ? "active" : "")">
                     <i class="fa-solid fa-hand-holding-dollar"></i>
                     Initiate Disbursement
                 </a>

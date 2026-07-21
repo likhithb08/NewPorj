@@ -9,6 +9,7 @@ public interface IAuditLogRepository : IGenericRepository<Auditlog>
     Task<Auditlog> CreateAsync(Auditlog log);
     Task<PagedResult<Auditlog>> GetPagedAsync(PagedQuery query);
     Task<IEnumerable<Auditlog>> GetByUserIdAsync(int userId);
+    Task<IEnumerable<Auditlog>> GetAuditLogsForApplicationAsync(int applicationId);
 }
 
 public interface IDocumentRepository : IGenericRepository<Document>

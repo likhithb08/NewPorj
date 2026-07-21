@@ -12,17 +12,23 @@ public class DisbursementService : IDisbursementService
     private readonly ILoanApplicationRepository _applicationRepository;
     private readonly IAuditLogService _auditLogService;
     private readonly INotificationService _notificationService;
+    private readonly IEmiService _emiService;
+    private readonly IApprovalRepository _approvalRepository;
 
     public DisbursementService(
         IDisbursmentRepository repository,
         ILoanApplicationRepository applicationRepository,
         IAuditLogService auditLogService,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IEmiService emiService,
+        IApprovalRepository approvalRepository)
     {
         _repository = repository;
         _applicationRepository = applicationRepository;
         _auditLogService = auditLogService;
         _notificationService = notificationService;
+        _emiService = emiService;
+        _approvalRepository = approvalRepository;
     }
 
     public async Task<Disbursment> CreateAsync(Disbursment disbursement)
@@ -57,6 +63,19 @@ public class DisbursementService : IDisbursementService
         {
             application.Status = ApplicationStatus.Disbursed;
             await _applicationRepository.UpdateLoanApplicationAsync(application);
+
+            // Fetch approved terms for EMI schedule generation
+            var approval = await _approvalRepository.GetApprovalByApplicationIdAsync(disbursement.ApplicationId)
+                ?? throw new ServiceException("Approval record not found for this loan application.");
+
+            await _emiService.GenerateScheduleAsync(
+                disbursement.ApplicationId,
+                disbursement.AmountApproved,
+                approval.ApprovedInterestRate,
+                approval.ApprovedTenureMonths,
+                processedByUserId
+            );
+
             await _notificationService.CreateAsync(application.CustomerId, NotificationType.DisbursementProcessed, "Disbursement Processed", $"Your loan disbursement of {disbursement.AmountApproved} has been processed.", application.ApplicationId);
         }
 

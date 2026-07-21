@@ -20,7 +20,7 @@ namespace LOCPS.Models
         [Required]
         public DocumentType DocumentType { get; set; }
 
-        [StringLength(50)]
+        [StringLength(255)]
         public string FileName { get; set; } = string.Empty;
 
         public string FilePath { get; set; } = string.Empty;
@@ -39,8 +39,8 @@ namespace LOCPS.Models
         public string? Remarks { get; set; }
 
         [ForeignKey(nameof(Verifier))]
-        public int VerifiedByUserId { get; set; }
-        public User Verifier { get; set; } = null!;
+        public int? VerifiedByUserId { get; set; }
+        public User? Verifier { get; set; }
 
     }
 }
